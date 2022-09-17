@@ -1,2 +1,2 @@
 # wDoo
-wDoo: Web application framework based on WSGI and Odoo
+wDoo: Web application framework based on WSGI and wdoo
