@@ -1,0 +1,12 @@
+.ui-autocomplete .ui-menu-item {
+    &.o_m2o_dropdown_option > a {
+        color: $o-brand-wdoo;
+
+        &.ui-state-active {
+            color: darken($o-brand-wdoo, 10%);
+        }
+    }
+    &.o_m2o_start_typing > a.ui-state-active {
+        color: $dropdown-link-color;
+    }
+}
