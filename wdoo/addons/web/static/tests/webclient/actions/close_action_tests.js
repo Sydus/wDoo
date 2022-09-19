@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import testUtils from "web.test_utils";
 import { click, legacyExtraNextTick, nextTick } from "../../helpers/utils";

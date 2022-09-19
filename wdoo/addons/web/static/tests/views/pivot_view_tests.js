@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { dialogService } from "@web/core/dialog/dialog_service";
 import { registry } from "@web/core/registry";

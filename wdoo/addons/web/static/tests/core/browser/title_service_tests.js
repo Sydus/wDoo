@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { titleService } from "@web/core/browser/title_service";
 import { registry } from "@web/core/registry";

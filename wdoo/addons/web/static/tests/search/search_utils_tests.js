@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { constructDateDomain } from "@web/search/utils/dates";
 import { defaultLocalization } from "@web/../tests/helpers/mock_services";

@@ -323,8 +323,10 @@ class IrHttp(models.AbstractModel):
                 elif self.env.user.has_group('base.group_portal'):
                     # Check the read access on the record linked to the attachment
                     # eg: Allow to download an attachment on a task from /my/task/task_id
+                    
                     record.check('read')
                     record = record_sudo
+                
 
             # check read access
             try:
@@ -466,7 +468,7 @@ class IrHttp(models.AbstractModel):
         :returns: (status, headers, content)
         """
         record, status = self._get_record_and_check(xmlid=xmlid, model=model, id=id, field=field, access_token=access_token)
-
+        
         if not record:
             return (status or 404, [], None)
 

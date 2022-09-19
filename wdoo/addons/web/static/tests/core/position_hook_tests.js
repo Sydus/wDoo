@@ -1,4 +1,4 @@
-/** @odoo-module */
+/** @wdoo-module */
 
 import { browser } from "@web/core/browser/browser";
 import { computePositioning, DEFAULTS, usePosition } from "@web/core/position/position_hook";

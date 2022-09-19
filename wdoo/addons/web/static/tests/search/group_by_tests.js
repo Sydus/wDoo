@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { getGroupBy } from "@web/search/utils/group_by";
 import { DEFAULT_INTERVAL } from "@web/search/utils/dates";

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { defaultLocalization } from "../helpers/mock_services";
 import {

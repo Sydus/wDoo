@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { escapeRegExp, intersperse, sprintf } from "@web/core/utils/strings";
 import { _lt, translatedTerms } from "@web/core/l10n/translation";
@@ -11,10 +11,10 @@ QUnit.module("utils", () => {
         assert.deepEqual(escapeRegExp(""), "");
         assert.deepEqual(escapeRegExp("wowl"), "wowl");
         assert.deepEqual(escapeRegExp("[wowl]"), "\\[wowl\\]");
-        assert.deepEqual(escapeRegExp("[wowl.odoo]"), "\\[wowl\\.odoo\\]");
+        assert.deepEqual(escapeRegExp("[wowl.wdoo]"), "\\[wowl\\.wdoo\\]");
         assert.deepEqual(
-            escapeRegExp("^odoo.define([.]*)$"),
-            "\\^odoo\\.define\\(\\[\\.\\]\\*\\)\\$"
+            escapeRegExp("^wdoo.define([.]*)$"),
+            "\\^wdoo\\.define\\(\\[\\.\\]\\*\\)\\$"
         );
         assert.deepEqual(
             escapeRegExp("[.*+?^${}()|[]\\"),

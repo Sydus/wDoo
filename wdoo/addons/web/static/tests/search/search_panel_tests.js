@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { makeFakeUserService } from "@web/../tests/helpers/mock_services";
 import { click, legacyExtraNextTick, makeDeferred, nextTick } from "@web/../tests/helpers/utils";

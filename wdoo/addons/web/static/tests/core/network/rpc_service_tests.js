@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import { ConnectionAbortedError, rpcService } from "@web/core/network/rpc_service";

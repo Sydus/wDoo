@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { translatedTerms, _lt } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";

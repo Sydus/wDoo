@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { shallowEqual } from "@web/core/utils/objects";
 

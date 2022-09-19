@@ -1,4 +1,4 @@
-odoo.define('web.filter_menu_generator_tests', function (require) {
+wdoo.define('web.filter_menu_generator_tests', function (require) {
     "use strict";
 
     const Domain = require('web.Domain');

@@ -1,4 +1,4 @@
-odoo.define('web.qweb_view_tests', function (require) {
+wdoo.define('web.qweb_view_tests', function (require) {
 "use strict";
 
 const utils = require('web.test_utils');

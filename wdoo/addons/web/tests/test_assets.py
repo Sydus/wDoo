@@ -3,21 +3,21 @@
 import logging
 import time
 
-import odoo
-import odoo.tests
+import wdoo
+import wdoo.tests
 
-from odoo.modules.module import read_manifest
-from odoo.tools import mute_logger
+from wdoo.modules.module import read_manifest
+from wdoo.tools import mute_logger
 
 _logger = logging.getLogger(__name__)
 
 
-class TestAssetsGenerateTimeCommon(odoo.tests.TransactionCase):
+class TestAssetsGenerateTimeCommon(wdoo.tests.TransactionCase):
 
     def generate_bundles(self):
         bundles = set()
         installed_module_names = self.env['ir.module.module'].search([('state', '=', 'installed')]).mapped('name')
-        for addon_path in odoo.addons.__path__:
+        for addon_path in wdoo.addons.__path__:
             for addon in installed_module_names:
                 manifest = read_manifest(addon_path, addon) or {}
                 assets = manifest.get('assets')
@@ -25,7 +25,7 @@ class TestAssetsGenerateTimeCommon(odoo.tests.TransactionCase):
                     bundles |= set(assets.keys())
 
         for bundle in bundles:
-            with mute_logger('odoo.addons.base.models.assetsbundle'):
+            with mute_logger('wdoo.addons.base.models.assetsbundle'):
                 for assets_type in 'css', 'js':
                     try:
                         start_t = time.time()
@@ -37,7 +37,7 @@ class TestAssetsGenerateTimeCommon(odoo.tests.TransactionCase):
                         _logger.info('Error detected while generating bundle %r %s', bundle, assets_type)
 
 
-@odoo.tests.tagged('post_install', '-at_install')
+@wdoo.tests.tagged('post_install', '-at_install')
 class TestLogsAssetsGenerateTime(TestAssetsGenerateTimeCommon):
 
     def test_logs_assets_generate_time(self):
@@ -50,7 +50,7 @@ class TestLogsAssetsGenerateTime(TestAssetsGenerateTimeCommon):
             _logger.info('Bundle %r generated in %.2fs', bundle, duration)
 
 
-@odoo.tests.tagged('post_install', '-at_install', '-standard', 'bundle_generation')
+@wdoo.tests.tagged('post_install', '-at_install', '-standard', 'bundle_generation')
 class TestAssetsGenerateTime(TestAssetsGenerateTimeCommon):
     """
     This test is meant to be run nightly to ensure bundle generation does not exceed

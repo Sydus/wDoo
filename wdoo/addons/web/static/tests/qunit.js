@@ -216,8 +216,8 @@
         modulesAlert.textContent = "Waiting for modules check...";
         document.getElementById("qunit").appendChild(modulesAlert);
         // wait for the module system to end processing the JS modules
-        await odoo.__DEBUG__.didLogInfo;
-        const info = odoo.__DEBUG__.jsModules;
+        await wdoo.__DEBUG__.didLogInfo;
+        const info = wdoo.__DEBUG__.jsModules;
         if (info.missing.length || info.failed.length || info.unloaded.length) {
             document.querySelector("#qunit-banner").classList.add("qunit-fail");
             modulesAlert.classList.toggle("alert-danger");
@@ -349,8 +349,8 @@
     });
 
     QUnit.begin(function () {
-        if (odoo.__DEBUG__.services["@web/core/errors/error_utils"]) {
-            const errorUtils = odoo.__DEBUG__.services["@web/core/errors/error_utils"];
+        if (wdoo.__DEBUG__.services["@web/core/errors/error_utils"]) {
+            const errorUtils = wdoo.__DEBUG__.services["@web/core/errors/error_utils"];
             const { annotateTraceback } = errorUtils;
             QUnit.annotateTraceback = annotateTraceback;
         }

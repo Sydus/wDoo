@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { patch, unpatch } from "@web/core/utils/patch";
 

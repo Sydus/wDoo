@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { registry } from "@web/core/registry";
 import testUtils from "web.test_utils";
@@ -137,7 +137,7 @@ QUnit.module("ActionManager", (hooks) => {
                 assert.ok(widget);
                 return {};
             });
-        patchWithCleanup(odoo, { debug: true });
+        patchWithCleanup(wdoo, { debug: true });
 
         const mockRPC = (route) => {
             if (route.includes("check_access_rights")) {

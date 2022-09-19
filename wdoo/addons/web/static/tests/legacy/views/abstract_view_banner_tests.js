@@ -1,4 +1,4 @@
-odoo.define('web.abstract_view_banner_tests', function (require) {
+wdoo.define('web.abstract_view_banner_tests', function (require) {
 "use strict";
 
 var AbstractRenderer = require('web.AbstractRenderer');

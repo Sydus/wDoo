@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import { CommandPaletteDialog } from "@web/core/commands/command_palette_dialog";

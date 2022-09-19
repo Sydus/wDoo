@@ -1,4 +1,4 @@
-odoo.define('web.kanban_tests', function (require) {
+wdoo.define('web.kanban_tests', function (require) {
 "use strict";
 
 var AbstractField = require('web.AbstractField');
@@ -1642,7 +1642,7 @@ QUnit.module('Views', {
         // will NOT close the quick create.
         // This can happen when the user clicks out of the input because of a race condition between
         // the focusout of the m2o and the global 'click' handler of the quick create.
-        // Check odoo/odoo#61981 for more details.
+        // Check wdoo/wdoo#61981 for more details.
         const $body = kanban.$el.closest('body');
         assert.hasClass($body, 'modal-open',
             "modal should be opening after m2o focusout");

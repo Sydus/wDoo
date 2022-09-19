@@ -58,7 +58,7 @@ from wdoo.modules.registry import Registry
 from wdoo.release import nt_service_name
 from wdoo.tools import config
 from wdoo.tools import stripped_sys_argv, dumpstacks, log_ormcache_stats
-# from ..tests import loader, runner
+from ..tests import loader, runner
 
 _logger = logging.getLogger(__name__)
 

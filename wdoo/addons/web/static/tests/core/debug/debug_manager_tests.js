@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import { DebugMenu } from "@web/core/debug/debug_menu";
@@ -224,7 +224,7 @@ QUnit.module("DebugMenu", (hooks) => {
                     useDebugCategory("custom", { customKey: "abc" });
                 }
             }
-            patchWithCleanup(odoo, { debug: "1" });
+            patchWithCleanup(wdoo, { debug: "1" });
             const env = await makeTestEnv(testConfig);
             const actionDialog = await mount(WithCustom, {
                 env,
@@ -295,7 +295,7 @@ QUnit.module("DebugMenu", (hooks) => {
         };
         prepareRegistriesWithCleanup();
 
-        patchWithCleanup(odoo, {
+        patchWithCleanup(wdoo, {
             debug: true,
         });
 
@@ -346,7 +346,7 @@ QUnit.module("DebugMenu", (hooks) => {
         };
         prepareRegistriesWithCleanup();
 
-        patchWithCleanup(odoo, {
+        patchWithCleanup(wdoo, {
             debug: true,
         });
 
@@ -389,7 +389,7 @@ QUnit.module("DebugMenu", (hooks) => {
         };
         prepareRegistriesWithCleanup();
 
-        patchWithCleanup(odoo, {
+        patchWithCleanup(wdoo, {
             debug: true,
         });
 
@@ -427,7 +427,7 @@ QUnit.module("DebugMenu", (hooks) => {
             };
             prepareRegistriesWithCleanup();
 
-            patchWithCleanup(odoo, {
+            patchWithCleanup(wdoo, {
                 debug: true,
             });
             registry.category("debug").category("view").add("editSearchViewItem", editSearchView);

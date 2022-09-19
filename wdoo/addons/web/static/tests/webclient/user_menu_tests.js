@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import { ormService } from "@web/core/orm_service";
@@ -125,7 +125,7 @@ QUnit.test("can be rendered", async (assert) => {
 });
 
 QUnit.test("display the correct name in debug mode", async (assert) => {
-    patchWithCleanup(odoo, { debug: "1" });
+    patchWithCleanup(wdoo, { debug: "1" });
     env = await makeTestEnv();
     userMenu = await mount(UserMenu, { env, target });
     let userMenuEl = userMenu.el;

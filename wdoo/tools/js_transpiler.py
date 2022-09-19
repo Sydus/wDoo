@@ -46,13 +46,6 @@ def transpile_javascript(url, content):
         content = s(content)
     if legacy_odoo_define:
         content += legacy_odoo_define
-
-    try:
-        with open(('%s.js' % url ).replace('/','_'), 'w') as f:
-            f.write(content.encode().decode())
-    except:
-        pass
-    
     return content
 
 

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { createWebClient, getActionManagerServerData } from "@web/../tests/webclient/helpers";
 import { browser } from "@web/core/browser/browser";

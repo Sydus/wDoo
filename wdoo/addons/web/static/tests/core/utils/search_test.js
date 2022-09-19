@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { fuzzyLookup, fuzzyTest } from "@web/core/utils/search";
 

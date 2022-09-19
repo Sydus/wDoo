@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { Mutex, KeepLast, Race } from "@web/core/utils/concurrency";
 import { nextTick, makeDeferred } from "../../helpers/utils";

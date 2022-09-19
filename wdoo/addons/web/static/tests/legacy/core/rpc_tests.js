@@ -1,4 +1,4 @@
-odoo.define('web.rpc_tests', function (require) {
+wdoo.define('web.rpc_tests', function (require) {
 "use strict";
 
 var rpc = require('web.rpc');

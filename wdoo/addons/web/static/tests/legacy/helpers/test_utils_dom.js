@@ -1,4 +1,4 @@
-odoo.define('web.test_utils_dom', function (require) {
+wdoo.define('web.test_utils_dom', function (require) {
     "use strict";
 
     const concurrency = require('web.concurrency');

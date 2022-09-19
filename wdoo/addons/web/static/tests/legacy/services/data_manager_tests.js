@@ -1,4 +1,4 @@
-odoo.define('web.data_manager_tests', function (require) {
+wdoo.define('web.data_manager_tests', function (require) {
     "use strict";
 
     const config = require('web.config');

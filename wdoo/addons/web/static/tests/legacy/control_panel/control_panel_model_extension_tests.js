@@ -1,4 +1,4 @@
-odoo.define("web/static/tests/control_panel/control_panel_model_extension_tests.js", function (require) {
+wdoo.define("web/static/tests/control_panel/control_panel_model_extension_tests.js", function (require) {
     "use strict";
 
     const ActionModel = require("web.ActionModel");

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { registry } from "@web/core/registry";
 import { userService } from "@web/core/user_service";

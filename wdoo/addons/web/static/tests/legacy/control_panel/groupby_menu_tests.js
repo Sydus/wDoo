@@ -1,4 +1,4 @@
-odoo.define('web.groupby_menu_tests', function (require) {
+wdoo.define('web.groupby_menu_tests', function (require) {
     "use strict";
 
     const { browser } = require('@web/core/browser/browser');

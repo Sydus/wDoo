@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { createWebClient, doAction, getActionManagerServerData } from "./../helpers";
 

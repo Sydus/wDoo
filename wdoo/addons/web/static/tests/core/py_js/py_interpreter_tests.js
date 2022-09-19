@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { evaluateExpr } from "@web/core/py_js/py";
 

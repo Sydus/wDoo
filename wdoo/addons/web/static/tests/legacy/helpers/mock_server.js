@@ -1,4 +1,4 @@
-odoo.define('web.MockServer', function (require) {
+wdoo.define('web.MockServer', function (require) {
 "use strict";
 
 var Class = require('web.Class');

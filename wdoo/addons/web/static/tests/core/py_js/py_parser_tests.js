@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { parseExpr } from "@web/core/py_js/py";
 

@@ -1,4 +1,4 @@
-odoo.define('web.week_days_tests', function (require) {
+wdoo.define('web.week_days_tests', function (require) {
     "use strict";
 
     const FormView = require('web.FormView');

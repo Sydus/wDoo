@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { legacyExtraNextTick, patchWithCleanup } from "@web/../tests/helpers/utils";
 import {

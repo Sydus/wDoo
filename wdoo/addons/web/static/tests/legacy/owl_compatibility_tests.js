@@ -1,4 +1,4 @@
-odoo.define('web.OwlCompatibilityTests', function (require) {
+wdoo.define('web.OwlCompatibilityTests', function (require) {
     "use strict";
 
     const AbstractField = require('web.AbstractField');

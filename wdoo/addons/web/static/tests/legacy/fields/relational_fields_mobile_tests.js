@@ -1,4 +1,4 @@
-odoo.define("web.relational_fields_mobile_tests", function (require) {
+wdoo.define("web.relational_fields_mobile_tests", function (require) {
 "use strict";
 
 const FormView = require("web.FormView");

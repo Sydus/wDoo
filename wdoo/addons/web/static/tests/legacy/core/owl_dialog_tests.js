@@ -1,5 +1,5 @@
 
-odoo.define('web.owl_dialog_tests', function (require) {
+wdoo.define('web.owl_dialog_tests', function (require) {
     "use strict";
 
     const LegacyDialog = require('web.Dialog');

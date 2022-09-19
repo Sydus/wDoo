@@ -1,8 +1,8 @@
-odoo.define("web.SessionOverrideForTests", (require) => {
+wdoo.define("web.SessionOverrideForTests", (require) => {
     // Override the Session.session_reload function
-    // The wowl test infrastructure does set a correct odoo global value before each test
+    // The wowl test infrastructure does set a correct wdoo global value before each test
     // while the session is built only once for all tests.
-    // So if a test does a session_reload, it will merge the odoo global of that test
+    // So if a test does a session_reload, it will merge the wdoo global of that test
     // into the session, and will alter every subsequent test of the suite.
     // Obviously, we don't want that, ever.
     const { session: sessionInfo } = require("@web/session");
@@ -20,7 +20,7 @@ odoo.define("web.SessionOverrideForTests", (require) => {
     });
 });
 
-odoo.define("web.test_legacy", async (require) => {
+wdoo.define("web.test_legacy", async (require) => {
     require("web.SessionOverrideForTests");
 
     const legacyProm = new Promise(async (resolve) => {

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import {
@@ -183,7 +183,7 @@ QUnit.test("WarningDialog", async (assert) => {
     class Parent extends Component {
         constructor() {
             super(...arguments);
-            this.name = "odoo.exceptions.UserError";
+            this.name = "wdoo.exceptions.UserError";
             this.message = "...";
             this.data = { arguments: ["Some strange unreadable message"] };
         }

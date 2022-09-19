@@ -159,7 +159,7 @@ class configmanager(object):
                          help="Launch a python test file.")
         group.add_option("--test-enable", action="callback", callback=self._test_enable_callback,
                          dest='test_enable',
-                         help="Enable unit tests.")
+                         help="Enable unit tests.", my_default=True)
         group.add_option("--test-tags", dest="test_tags",
                          help="Comma-separated list of specs to filter which tests to execute. Enable unit tests if set. "
                          "A filter spec has the format: [-][tag][/module][:class][.method] "

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { makeFakeLocalizationService } from "@web/../tests/helpers/mock_services";
 import { browser } from "@web/core/browser/browser";

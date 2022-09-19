@@ -1,4 +1,4 @@
-odoo.define('web.test_env', async function (require) {
+wdoo.define('web.test_env', async function (require) {
     "use strict";
 
     const Bus = require('web.Bus');

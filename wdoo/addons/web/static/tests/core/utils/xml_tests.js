@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 import { XMLParser } from "@web/core/utils/xml";
 
 QUnit.module("utils", () => {

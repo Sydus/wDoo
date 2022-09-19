@@ -1,4 +1,4 @@
-/** @odoo-module alias="web.search_bar_tests" **/
+/** @wdoo-module alias="web.search_bar_tests" **/
 
 import testUtils from "web.test_utils";
 import { createWebClient, doAction } from "@web/../tests/webclient/helpers";

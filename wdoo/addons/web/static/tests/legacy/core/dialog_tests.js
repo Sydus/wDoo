@@ -1,4 +1,4 @@
-odoo.define('web.dialog_tests', function (require) {
+wdoo.define('web.dialog_tests', function (require) {
 "use strict";
 
 var Dialog = require('web.Dialog');

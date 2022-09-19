@@ -1,4 +1,4 @@
-odoo.define('web.class_tests', function (require) {
+wdoo.define('web.class_tests', function (require) {
 "use strict";
 
 var Class = require('web.Class');

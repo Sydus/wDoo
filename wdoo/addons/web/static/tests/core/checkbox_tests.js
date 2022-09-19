@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { CheckBox } from "@web/core/checkbox/checkbox";
 import { translatedTerms } from "@web/core/l10n/translation";

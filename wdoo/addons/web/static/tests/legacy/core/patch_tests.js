@@ -1,4 +1,4 @@
-odoo.define("web.patch_tests", function (require) {
+wdoo.define("web.patch_tests", function (require) {
 "use strict";
 
 const { AlreadyDefinedPatchError, patch, unpatch, UnknownPatchError } = require('web.utils');

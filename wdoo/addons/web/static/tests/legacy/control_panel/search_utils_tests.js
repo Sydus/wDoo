@@ -1,4 +1,4 @@
-odoo.define('web.search_utils_tests', function (require) {
+wdoo.define('web.search_utils_tests', function (require) {
     "use strict";
 
     const { constructDateDomain } = require('web.searchUtils');

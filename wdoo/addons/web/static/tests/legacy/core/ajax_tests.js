@@ -1,4 +1,4 @@
-odoo.define('web.ajax_tests', function (require) {
+wdoo.define('web.ajax_tests', function (require) {
 "use strict";
 
 var ajax = require('web.ajax');

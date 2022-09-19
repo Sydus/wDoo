@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { makeEnv, startServices } from "@web/env";
 import { registry } from "@web/core/registry";

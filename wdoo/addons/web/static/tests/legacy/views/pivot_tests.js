@@ -1,4 +1,4 @@
-odoo.define('web.pivot_tests', function (require) {
+wdoo.define('web.pivot_tests', function (require) {
 "use strict";
 
 var core = require('web.core');

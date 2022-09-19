@@ -1,4 +1,4 @@
-odoo.define('web.test_utils_modal', function (require) {
+wdoo.define('web.test_utils_modal', function (require) {
     "use strict";
 
     /**

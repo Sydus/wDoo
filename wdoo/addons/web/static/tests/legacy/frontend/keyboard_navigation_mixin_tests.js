@@ -1,4 +1,4 @@
-odoo.define('web.keyboard_navigation_mixin_tests', function (require) {
+wdoo.define('web.keyboard_navigation_mixin_tests', function (require) {
 "use strict";
 
 var KeyboardNavigationMixin = require('web.KeyboardNavigationMixin');

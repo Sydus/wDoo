@@ -1,4 +1,4 @@
-/** @odoo-module */
+/** @wdoo-module */
 
 import { browser } from "@web/core/browser/browser";
 import { getOrigin, url } from "@web/core/utils/urls";

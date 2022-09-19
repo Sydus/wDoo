@@ -1,4 +1,4 @@
-odoo.define("base.abstract_controller_tests", function (require) {
+wdoo.define("base.abstract_controller_tests", function (require) {
 "use strict";
 
 const { xml } = owl.tags;

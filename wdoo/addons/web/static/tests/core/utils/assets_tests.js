@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { loadAssets } from "@web/core/assets";
 import { patchWithCleanup } from "@web/../tests/helpers/utils";

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { Popover } from "@web/core/popover/popover";
 import { registerCleanup } from "../../helpers/cleanup";

@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { DatePicker, DateTimePicker } from "@web/core/datepicker/datepicker";
 import { registry } from "@web/core/registry";

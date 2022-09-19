@@ -1,4 +1,4 @@
-odoo.define('web.test_utils_mock', function (require) {
+wdoo.define('web.test_utils_mock', function (require) {
 "use strict";
 
 /**
@@ -194,7 +194,7 @@ function _mockGlobalObjects(params) {
             Object.assign(config.device, params.config.device);
         }
         if ('debug' in params.config) {
-            odoo.debug = params.config.debug;
+            wdoo.debug = params.config.debug;
         }
     }
 
@@ -476,7 +476,7 @@ async function addMockEnvironmentOwl(Component, params, mockServer) {
  * @param {string} [params.currentDate] a string representation of the current
  *   date. It is given to the mock server.
  * @param {Object} params.data the data given to the created mock server. It is
- *   used to generate mock answers for every kind of routes supported by odoo
+ *   used to generate mock answers for every kind of routes supported by wdoo
  * @param {number} [params.debug] if set to true, logs RPCs and uncaught Odoo
  *   events.
  * @param {Object} [params.bus] the instance of Bus that will be used (in the env)

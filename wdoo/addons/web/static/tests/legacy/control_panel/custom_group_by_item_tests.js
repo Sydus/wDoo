@@ -1,4 +1,4 @@
-odoo.define('web.groupby_menu_generator_tests', function (require) {
+wdoo.define('web.groupby_menu_generator_tests', function (require) {
     "use strict";
 
     const CustomGroupByItem = require('web.CustomGroupByItem');

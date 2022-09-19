@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import core from "web.core";
 import session from "web.session";
@@ -151,7 +151,7 @@ function patchLegacyCoreBus() {
 }
 
 function patchOdoo() {
-    patchWithCleanup(odoo, {
+    patchWithCleanup(wdoo, {
         debug: "",
     });
 }

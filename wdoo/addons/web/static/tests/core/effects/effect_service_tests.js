@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { notificationService } from "@web/core/notifications/notification_service";
 import { registry } from "@web/core/registry";

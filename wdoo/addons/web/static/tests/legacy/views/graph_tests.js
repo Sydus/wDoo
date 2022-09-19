@@ -1,4 +1,4 @@
-odoo.define('web.graph_view_tests', function (require) {
+wdoo.define('web.graph_view_tests', function (require) {
 "use strict";
 
 const searchUtils = require('web.searchUtils');

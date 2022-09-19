@@ -1,4 +1,4 @@
-odoo.define('web.component_extension_tests', function (require) {
+wdoo.define('web.component_extension_tests', function (require) {
     "use strict";
 
     const makeTestEnvironment = require("web.test_env");

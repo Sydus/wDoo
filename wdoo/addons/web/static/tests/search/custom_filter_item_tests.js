@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { registerCleanup } from "@web/../tests/helpers/cleanup";
 import { click, patchDate, patchWithCleanup } from "@web/../tests/helpers/utils";

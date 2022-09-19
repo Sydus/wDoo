@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { useBus, useEffect, useListener, useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";

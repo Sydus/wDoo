@@ -1,4 +1,4 @@
-odoo.define('web.calendar_tests', function (require) {
+wdoo.define('web.calendar_tests', function (require) {
 "use strict";
 
 const AbstractField = require('web.AbstractField');

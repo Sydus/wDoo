@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { popoverService } from "@web/core/popover/popover_service";
 import { registry } from "@web/core/registry";

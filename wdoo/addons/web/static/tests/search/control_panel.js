@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { click } from "@web/../tests/helpers/utils";
 import { ControlPanel } from "@web/search/control_panel/control_panel";

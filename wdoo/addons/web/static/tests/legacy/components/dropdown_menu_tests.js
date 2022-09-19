@@ -1,4 +1,4 @@
-odoo.define('web.dropdown_menu_tests', function (require) {
+wdoo.define('web.dropdown_menu_tests', function (require) {
     "use strict";
 
     const DropdownMenu = require('web.DropdownMenu');

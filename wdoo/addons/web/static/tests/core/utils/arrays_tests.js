@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { cartesian, groupBy, sortBy } from "@web/core/utils/arrays";
 

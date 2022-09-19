@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { FileInput } from "@web/core/file_input/file_input";
 import { registry } from "@web/core/registry";
@@ -53,7 +53,7 @@ QUnit.module("Components", () => {
         const fileInput = await createFileInput({
             mockPost: (route, params) => {
                 assert.deepEqual(params, {
-                    csrf_token: odoo.csrf_token,
+                    csrf_token: wdoo.csrf_token,
                     ufile: [],
                 });
                 assert.step(route);
@@ -92,7 +92,7 @@ QUnit.module("Components", () => {
                 assert.deepEqual(params, {
                     id: 5,
                     model: "res.model",
-                    csrf_token: odoo.csrf_token,
+                    csrf_token: wdoo.csrf_token,
                     ufile: [],
                 });
                 assert.step(route);

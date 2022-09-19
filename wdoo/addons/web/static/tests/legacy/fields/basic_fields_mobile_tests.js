@@ -1,4 +1,4 @@
-odoo.define('web.basic_fields_mobile_tests', function (require) {
+wdoo.define('web.basic_fields_mobile_tests', function (require) {
 "use strict";
 
 var FormView = require('web.FormView');

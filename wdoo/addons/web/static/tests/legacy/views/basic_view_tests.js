@@ -1,4 +1,4 @@
-odoo.define('web.basic_view_tests', function (require) {
+wdoo.define('web.basic_view_tests', function (require) {
     "use strict";
 
     const BasicView = require('web.BasicView');

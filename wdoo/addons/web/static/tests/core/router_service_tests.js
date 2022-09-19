@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { browser } from "@web/core/browser/browser";
 import { parseHash, parseSearchQuery, routeToUrl } from "@web/core/browser/router_service";

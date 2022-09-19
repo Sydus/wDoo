@@ -2,13 +2,13 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
-import odoo.tests
+import wdoo.tests
 
 RE_ONLY = re.compile(r'QUnit\.(only|debug)\(')
 
 
-@odoo.tests.tagged('post_install', '-at_install')
-class WebSuite(odoo.tests.HttpCase):
+@wdoo.tests.tagged('post_install', '-at_install')
+class WebSuite(wdoo.tests.HttpCase):
 
     def test_js(self):
         # webclient desktop test suite
@@ -37,8 +37,8 @@ class WebSuite(odoo.tests.HttpCase):
                     self.fail("`QUnit.only()` or `QUnit.debug()` used in file %r" % asset['url'])
 
 
-@odoo.tests.tagged('post_install', '-at_install')
-class MobileWebSuite(odoo.tests.HttpCase):
+@wdoo.tests.tagged('post_install', '-at_install')
+class MobileWebSuite(wdoo.tests.HttpCase):
     browser_size = '375x667'
 
     def test_mobile_js(self):

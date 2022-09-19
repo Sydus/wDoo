@@ -9,9 +9,9 @@ from datetime import datetime, timedelta
 from lxml import etree
 import logging
 
-from odoo.tests.common import BaseCase, tagged
-from odoo.tools import topological_sort
-from odoo.addons.web.controllers.main import HomeStaticTemplateHelpers
+from wdoo.tests.common import BaseCase, tagged
+from wdoo.tools import topological_sort
+from wdoo.addons.web.controllers.main import HomeStaticTemplateHelpers
 
 _logger = logging.getLogger(__name__)
 

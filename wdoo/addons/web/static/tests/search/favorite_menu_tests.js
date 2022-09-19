@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { click, patchDate } from "@web/../tests/helpers/utils";
 import {

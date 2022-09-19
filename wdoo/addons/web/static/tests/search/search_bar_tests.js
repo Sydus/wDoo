@@ -1,4 +1,4 @@
-/** @odoo-module **/
+/** @wdoo-module **/
 
 import { registerCleanup } from "@web/../tests/helpers/cleanup";
 import { ControlPanel } from "@web/search/control_panel/control_panel";

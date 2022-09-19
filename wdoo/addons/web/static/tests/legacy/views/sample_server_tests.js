@@ -1,4 +1,4 @@
-odoo.define('web.sample_server_tests', function (require) {
+wdoo.define('web.sample_server_tests', function (require) {
     "use strict";
 
     const SampleServer = require('web.SampleServer');
