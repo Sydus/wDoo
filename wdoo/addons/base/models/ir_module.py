@@ -158,7 +158,7 @@ class Module(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(Module, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=False)
+        res = super(Module, self).fields_view_get(view_id, view_type, toolbar=toolbar)
         if view_type == 'form' and res.get('toolbar',False):
             install_id = self.env.ref('base.action_server_module_immediate_install').id
             action = [rec for rec in res['toolbar']['action'] if rec.get('id', False) != install_id]
@@ -236,7 +236,6 @@ class Module(models.Model):
                 return '%s%s (%s)' % (v.inherit_id and '* INHERIT ' or '', v.name, v.type)
 
             module.views_by_module = "\n".join(sorted(format_view(v) for v in browse('ir.ui.view')))
-            module.reports_by_module = "\n".join(sorted(r.name for r in browse('ir.actions.report')))
             module.menus_by_module = "\n".join(sorted(m.complete_name for m in browse('ir.ui.menu')))
 
     @api.depends('icon')
@@ -474,12 +473,7 @@ class Module(models.Model):
         _logger.info('User #%d triggered module installation', self.env.uid)
         # We use here the request object (which is thread-local) as a kind of
         # "global" env because the env is not usable in the following use case.
-        # When installing a Chart of Account, I would like to send the
-        # allowed companies to configure it on the correct company.
-        # Otherwise, the SUPERUSER won't be aware of that and will try to
-        # configure the CoA on his own company, which makes no sense.
-        if request:
-            request.allowed_company_ids = self.env.companies.ids
+       
         return self._button_immediate_function(type(self).button_install)
 
     @assert_log_admin_access

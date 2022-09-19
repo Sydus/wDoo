@@ -158,18 +158,8 @@
                                 <field name="login"
                                         placeholder="e.g. email@yourcompany.com"/>
                             </h2>
-                            <label for="company_id" groups="base.group_multi_company"/>
-                            <field name="company_id" context="{'user_preference': 0}" groups="base.group_multi_company"/>
-                        </div>
-                        <group name="phone_numbers">
-                            <label for="groups_id" string="Access Rights"
-                                    attrs="{'invisible': [('id', '>', 0)]}" groups="base.group_no_one"/>
-                            <div attrs="{'invisible': [('id', '>', 0)]}" groups="base.group_no_one">
-                                <field name="groups_id" readonly="1" widget="many2many_tags" options="{'color_field': 'color'}" style="display: inline;"/> You will be able to define additional access rights by editing the newly created user under the Settings / Users menu.
-                            </div>
-                            <field name="phone" widget="phone" options="{'enable_sms': false}"/>
-                            <field name="mobile" widget="phone" options="{'enable_sms': false}"/>
-                        </group>
+                             </div>
+                        
                     </sheet>
                 </form>
             </field>
@@ -195,23 +185,8 @@
                             </button>
                         </div>
                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
-                        <field name="active_partner" required="0" readonly="1" invisible="1"/>
-                        <div class="alert alert-info text-center o_form_header"
-                            attrs="{'invisible': [
-                                '|', '|',
-                                '&amp;', ('active', '=', True), ('active_partner', '=', True),
-                                '&amp;', ('active', '=', False), ('active_partner', '=', False),
-                                '&amp;', ('active', '=', True), ('active_partner', '=', False),
-                            ]}"
-                            role="alert">
-                          <a class="close" data-dismiss="alert" href="#">x</a>
-                          <div>
-                            <strong>The contact linked to this user is still active</strong>
-                          </div>
-                          <div>You can archive the contact
-                            <field name="partner_id" required="0" readonly="1"/>
-                          </div>
-                        </div>
+                       
+                     
                         <field name="avatar_128" invisible="1"/>
                         <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/>
                         <div class="oe_title">
@@ -220,18 +195,11 @@
                             <field name="email" invisible="1"/>
                             <label for="login" string="Email Address"/>
                             <h2><field name="login" placeholder="e.g. email@yourcompany.com"/></h2>
-                            <group>
-                                <field name="partner_id" readonly="1" required="0" groups="base.group_no_one"
-                                        attrs="{'invisible': [('id', '=', False)]}"/>
-                            </group>
+                            
                         </div>
                         <notebook colspan="4">
                             <page name="access_rights" string="Access Rights">
-                                <group string="Multi Companies" attrs="{'invisible': [('companies_count', '&lt;=', 1)]}">
-                                    <field string="Allowed Companies" name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                                    <field string="Default Company" name="company_id" context="{'user_preference': 0}"/>
-                                    <field string="Companies count" name="companies_count" invisible="1"/>
-                                </group>
+                                
                                 <field name="groups_id"/>
                             </page>
                             <page string="Preferences" name="preferences">
@@ -274,7 +242,7 @@
                     <field name="login"/>
                     <field name="lang"/>
                     <field name="login_date"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
+                   
                 </tree>
             </field>
         </record>
@@ -318,7 +286,6 @@
             <field name="arch" type="xml">
                 <search string="Users">
                     <field name="name" filter_domain="['|', '|', ('name','ilike',self), ('login','ilike',self), ('email','ilike',self)]" string="User"/>
-                    <field name="company_ids" string="Company" groups="base.group_multi_company"/>
                     <field name="share"/>
                     <filter name="no_share" string="Internal Users" domain="[('share','=',False)]"/>
                     <separator/>
@@ -455,13 +422,11 @@
                                 </group>
                             </group>
                             <group name="signature">
-                                <field name="signature" readonly="0" options="{'style-inline': true}"/>
                             </group>
                             <group name="status" string="Status" invisible="1">
-                                <field name="company_id" options="{'no_create': True}" readonly="0"
-                                    groups="base.group_multi_company"/>
+                                
                             </group>
-                            <group name="preference_contact"></group>
+                            
                         </page>
                         <page string="Account Security">
                             <group name="auth" string="Password Management">
@@ -471,7 +436,7 @@
                             </group>
                             <group groups="base.group_no_one">
                                 <div class="o_horizontal_separator">Developer API Keys
-                                    <a href="https://www.wdoo.com/documentation/15.0/developer/misc/api/wdoo.html#api-keys" target="_blank">
+                                    <a href="https://www.odoo.com/documentation/15.0/developer/misc/api/wdoo.html#api-keys" target="_blank">
                                         <i title="Documentation" class="fa fa-fw o_button_icon fa-info-circle"></i>
                                     </a>
                                 </div>

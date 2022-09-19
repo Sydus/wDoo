@@ -56,7 +56,7 @@ class FieldConverter(models.AbstractModel):
                 'string'
                 'integer'
                 'float'
-                'model' (e.g. 'res.partner')
+                'model' (e.g. 'res.user')
                 'array'
                 'selection' (e.g. [key1, key2...])
         """
@@ -389,97 +389,6 @@ class ImageUrlConverter(models.AbstractModel):
     def value_to_html(self, value, options):
         return M('<img src="%s">' % (value))
 
-class MonetaryConverter(models.AbstractModel):
-    """ ``monetary`` converter, has a mandatory option
-    ``display_currency`` only if field is not of type Monetary.
-    Otherwise, if we are in presence of a monetary field, the field definition must
-    have a currency_field attribute set.
-
-    The currency is used for formatting *and rounding* of the float value. It
-    is assumed that the linked res_currency has a non-empty rounding value and
-    res.currency's ``round`` method is used to perform rounding.
-
-    .. note:: the monetary converter internally adds the qweb context to its
-              options mapping, so that the context is available to callees.
-              It's set under the ``_values`` key.
-    """
-    _name = 'ir.qweb.field.monetary'
-    _description = 'Qweb Field Monetary'
-    _inherit = 'ir.qweb.field'
-
-    @api.model
-    def get_available_options(self):
-        options = super(MonetaryConverter, self).get_available_options()
-        options.update(
-            from_currency=dict(type='model', params='res.currency', string=_('Original currency')),
-            display_currency=dict(type='model', params='res.currency', string=_('Display currency'), required="value_to_html"),
-            date=dict(type='date', string=_('Date'), description=_('Date used for the original currency (only used for t-esc). by default use the current date.')),
-            company_id=dict(type='model', params='res.company', string=_('Company'), description=_('Company used for the original currency (only used for t-esc). By default use the user company')),
-        )
-        return options
-
-    @api.model
-    def value_to_html(self, value, options):
-        display_currency = options['display_currency']
-
-        if not isinstance(value, (int, float)):
-            raise ValueError(_("The value send to monetary field is not a number."))
-
-        # lang.format mandates a sprintf-style format. These formats are non-
-        # minimal (they have a default fixed precision instead), and
-        # lang.format will not set one by default. currency.round will not
-        # provide one either. So we need to generate a precision value
-        # (integer > 0) from the currency's rounding (a float generally < 1.0).
-        fmt = "%.{0}f".format(display_currency.decimal_places)
-
-        if options.get('from_currency'):
-            date = options.get('date') or fields.Date.today()
-            company_id = options.get('company_id')
-            if company_id:
-                company = self.env['res.company'].browse(company_id)
-            else:
-                company = self.env.company
-            value = options['from_currency']._convert(value, display_currency, company, date)
-
-        lang = self.user_lang()
-        formatted_amount = lang.format(fmt, display_currency.round(value),
-                                grouping=True, monetary=True).replace(r' ', '\N{NO-BREAK SPACE}').replace(r'-', '-\N{ZERO WIDTH NO-BREAK SPACE}')
-
-        pre = post = ''
-        if display_currency.position == 'before':
-            pre = '{symbol}\N{NO-BREAK SPACE}'.format(symbol=display_currency.symbol or '')
-        else:
-            post = '\N{NO-BREAK SPACE}{symbol}'.format(symbol=display_currency.symbol or '')
-
-        if options.get('label_price'):
-            sep = lang.decimal_point
-            integer_part, decimal_part = formatted_amount.split(sep)
-            integer_part += sep
-            return M('{pre}<span class="oe_currency_value">{0}</span><span class="oe_currency_value" style="font-size:0.5em">{1}</span>{post}').format(integer_part, decimal_part, pre=pre, post=post)
-
-        return M('{pre}<span class="oe_currency_value">{0}</span>{post}').format(formatted_amount, pre=pre, post=post)
-
-    @api.model
-    def record_to_html(self, record, field_name, options):
-        options = dict(options)
-        #currency should be specified by monetary field
-        field = record._fields[field_name]
-
-        if not options.get('display_currency') and field.type == 'monetary' and field.get_currency_field(record):
-            options['display_currency'] = record[field.get_currency_field(record)]
-        if not options.get('display_currency'):
-            # search on the model if they are a res.currency field to set as default
-            fields = record._fields.items()
-            currency_fields = [k for k, v in fields if v.type == 'many2one' and v.comodel_name == 'res.currency']
-            if currency_fields:
-                options['display_currency'] = record[currency_fields[0]]
-        if 'date' not in options:
-            options['date'] = record._context.get('date')
-        if 'company_id' not in options:
-            options['company_id'] = record._context.get('company_id')
-
-        return super(MonetaryConverter, self).record_to_html(record, field_name, options)
-
 
 TIMEDELTA_UNITS = (
     ('year',   _lt('year'),   3600 * 24 * 365),
@@ -672,80 +581,6 @@ class BarcodeConverter(models.AbstractModel):
             img_element.set('alt', _('Barcode %s') % value)
         img_element.set('src', 'data:image/png;base64,%s' % base64.b64encode(barcode).decode())
         return M(html.tostring(img_element, encoding='unicode'))
-
-
-class Contact(models.AbstractModel):
-    _name = 'ir.qweb.field.contact'
-    _description = 'Qweb Field Contact'
-    _inherit = 'ir.qweb.field.many2one'
-
-    @api.model
-    def get_available_options(self):
-        options = super(Contact, self).get_available_options()
-        contact_fields = [
-            {'field_name': 'name', 'label': _('Name'), 'default': True},
-            {'field_name': 'address', 'label': _('Address'), 'default': True},
-            {'field_name': 'phone', 'label': _('Phone'), 'default': True},
-            {'field_name': 'mobile', 'label': _('Mobile'), 'default': True},
-            {'field_name': 'email', 'label': _('Email'), 'default': True},
-            {'field_name': 'vat', 'label': _('VAT')},
-        ]
-        separator_params = dict(
-            type='selection',
-            selection=[[" ", _("Space")], [",", _("Comma")], ["-", _("Dash")], ["|", _("Vertical bar")], ["/", _("Slash")]],
-            placeholder=_('Linebreak'),
-        )
-        options.update(
-            fields=dict(type='array', params=dict(type='selection', params=contact_fields), string=_('Displayed fields'), description=_('List of contact fields to display in the widget'), default_value=[param.get('field_name') for param in contact_fields if param.get('default')]),
-            separator=dict(type='selection', params=separator_params, string=_('Address separator'), description=_('Separator use to split the address from the display_name.'), default_value=False),
-            no_marker=dict(type='boolean', string=_('Hide badges'), description=_("Don't display the font awesome marker")),
-            no_tag_br=dict(type='boolean', string=_('Use comma'), description=_("Use comma instead of the <br> tag to display the address")),
-            phone_icons=dict(type='boolean', string=_('Display phone icons'), description=_("Display the phone icons even if no_marker is True")),
-            country_image=dict(type='boolean', string=_('Display country image'), description=_("Display the country image if the field is present on the record")),
-        )
-        return options
-
-    @api.model
-    def value_to_html(self, value, options):
-        if not value:
-            return ''
-
-        opf = options.get('fields') or ["name", "address", "phone", "mobile", "email"]
-        sep = options.get('separator')
-        template_options = options.get('template_options', {})
-        if sep:
-            opsep = escape(sep)
-        elif template_options.get('no_tag_br'):
-            # escaped joiners will auto-escape joined params
-            opsep = escape(', ')
-        else:
-            opsep = M('<br/>')
-
-        value = value.sudo().with_context(show_address=True)
-        name_get = value.name_get()[0][1]
-        # Avoid having something like:
-        # name_get = 'Foo\n  \n' -> This is a res.partner with a name and no address
-        # That would return markup('<br/>') as address. But there is no address set.
-        if any(elem.strip() for elem in name_get.split("\n")[1:]):
-            address = opsep.join(name_get.split("\n")[1:]).strip()
-        else:
-            address = ''
-        val = {
-            'name': name_get.split("\n")[0],
-            'address': address,
-            'phone': value.phone,
-            'mobile': value.mobile,
-            'city': value.city,
-            'country_id': value.country_id.display_name,
-            'website': value.website,
-            'email': value.email,
-            'vat': value.vat,
-            'vat_label': value.country_id.vat_label or _('VAT'),
-            'fields': opf,
-            'object': value,
-            'options': options
-        }
-        return self.env['ir.qweb']._render('base.contact', val, **template_options)
 
 
 class QwebView(models.AbstractModel):

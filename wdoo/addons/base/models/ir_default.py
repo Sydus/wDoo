@@ -17,8 +17,7 @@ class IrDefault(models.Model):
                                ondelete='cascade', index=True)
     user_id = fields.Many2one('res.users', string='User', ondelete='cascade', index=True,
                               help="If set, action binding only applies for this user.")
-    company_id = fields.Many2one('res.company', string='Company', ondelete='cascade', index=True,
-                                 help="If set, action binding only applies for this company")
+
     condition = fields.Char('Condition', help="If set, applies the default upon condition.")
     json_value = fields.Char('Default Value (JSON format)', required=True)
 
@@ -38,15 +37,14 @@ class IrDefault(models.Model):
         return super(IrDefault, self).unlink()
 
     @api.model
-    def set(self, model_name, field_name, value, user_id=False, company_id=False, condition=False):
+    def set(self, model_name, field_name, value, user_id=False, condition=False):
         """ Defines a default value for the given field. Any entry for the same
-            scope (field, user, company) will be replaced. The value is encoded
+            scope (field, user) will be replaced. The value is encoded
             in JSON to be stored to the database.
 
             :param user_id: may be ``False`` for all users, ``True`` for the
                             current user, or any user id
-            :param company_id: may be ``False`` for all companies, ``True`` for
-                               the current user's company, or any company id
+    
             :param condition: optional condition that restricts the
                               applicability of the default value; this is an
                               opaque string, but the client typically uses
@@ -54,8 +52,7 @@ class IrDefault(models.Model):
         """
         if user_id is True:
             user_id = self.env.uid
-        if company_id is True:
-            company_id = self.env.company.id
+       
 
         # check consistency of model_name, field_name, and value
         try:
@@ -73,7 +70,7 @@ class IrDefault(models.Model):
         default = self.search([
             ('field_id', '=', field.id),
             ('user_id', '=', user_id),
-            ('company_id', '=', company_id),
+          
             ('condition', '=', condition),
         ])
         if default:
@@ -82,21 +79,20 @@ class IrDefault(models.Model):
             self.create({
                 'field_id': field.id,
                 'user_id': user_id,
-                'company_id': company_id,
+             
                 'condition': condition,
                 'json_value': json_value,
             })
         return True
 
     @api.model
-    def get(self, model_name, field_name, user_id=False, company_id=False, condition=False):
-        """ Return the default value for the given field, user and company, or
+    def get(self, model_name, field_name, user_id=False,  condition=False):
+        """ Return the default value for the given field, user, or
             ``None`` if no default is available.
 
             :param user_id: may be ``False`` for all users, ``True`` for the
                             current user, or any user id
-            :param company_id: may be ``False`` for all companies, ``True`` for
-                               the current user's company, or any company id
+           
             :param condition: optional condition that restricts the
                               applicability of the default value; this is an
                               opaque string, but the client typically uses
@@ -104,23 +100,21 @@ class IrDefault(models.Model):
         """
         if user_id is True:
             user_id = self.env.uid
-        if company_id is True:
-            company_id = self.env.company.id
+    
 
         field = self.env['ir.model.fields']._get(model_name, field_name)
         default = self.search([
             ('field_id', '=', field.id),
             ('user_id', '=', user_id),
-            ('company_id', '=', company_id),
             ('condition', '=', condition),
         ], limit=1)
         return json.loads(default.json_value) if default else None
 
     @api.model
-    @tools.ormcache('self.env.uid', 'self.env.company.id', 'model_name', 'condition')
-    # Note about ormcache invalidation: it is not needed when deleting a field,
-    # a user, or a company, as the corresponding defaults will no longer be
-    # requested. It must only be done when a user's company is modified.
+    @tools.ormcache('self.env.uid', 'model_name', 'condition')
+    # Note about ormcache invalidation: it is not needed when deleting a field or
+    # a user, as the corresponding defaults will no longer be
+    # requested.
     def get_model_defaults(self, model_name, condition=False):
         """ Return the available default values for the given model (for the
             current user), as a dict mapping field names to values.
@@ -131,12 +125,11 @@ class IrDefault(models.Model):
                     JOIN ir_model_fields f ON d.field_id=f.id
                     WHERE f.model=%s
                         AND (d.user_id IS NULL OR d.user_id=%s)
-                        AND (d.company_id IS NULL OR d.company_id=%s)
                         AND {}
-                    ORDER BY d.user_id, d.company_id, d.id
+                    ORDER BY d.user_id, d.id
                 """
-        # self.env.company is empty when there is no user (controllers with auth=None)
-        params = [model_name, self.env.uid, self.env.company.id or None]
+       
+        params = [model_name, self.env.uid]
         if condition:
             query = query.format("d.condition=%s")
             params.append(condition)

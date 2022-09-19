@@ -12,9 +12,9 @@
                         <field name="field_id"/>
                         <field name="json_value"/>
                     </group>
-                    <group name="user_company_details">
+                    <group name="user_details">
                         <field name="user_id"/>
-                        <field name="company_id" groups="base.group_multi_company"/>
+                      
                     </group>
                 </group>
             </sheet>
@@ -30,7 +30,7 @@
                 <field name="field_id"/>
                 <field name="json_value"/>
                 <field name="user_id"/>
-                <field name="company_id" groups="base.group_multi_company"/>
+              
             </tree>
         </field>
     </record>
@@ -42,10 +42,9 @@
             <search string="User-defined Defaults">
                 <field name="field_id"/>
                 <field name="user_id"/>
-                <field name="company_id" groups="base.group_multi_company"/>
+                
                 <group expand="0" string="Group By">
                     <filter string="User" name="groupby_user" domain="[]" context="{'group_by':'user_id'}"/>
-                    <filter string="Company" name="groupby_company" domain="[]" context="{'group_by':'company_id'}"/>
                 </group>
             </search>
         </field>

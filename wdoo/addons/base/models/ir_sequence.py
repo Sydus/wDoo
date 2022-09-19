@@ -145,8 +145,7 @@ class IrSequence(models.Model):
     padding = fields.Integer(string='Sequence Size', required=True, default=0,
                              help="wdoo will automatically adds some '0' on the left of the "
                                   "'Next Number' to get the required padding size.")
-    company_id = fields.Many2one('res.company', string='Company',
-                                 default=lambda s: s.env.company)
+
     use_date_range = fields.Boolean(string='Use subsequences per date_range')
     date_range_ids = fields.One2many('ir.sequence.date_range', 'sequence_id', string='Subsequences')
 
@@ -273,15 +272,11 @@ class IrSequence(models.Model):
     @api.model
     def next_by_code(self, sequence_code, sequence_date=None):
         """ Draw an interpolated string using a sequence with the requested code.
-            If several sequences with the correct code are available to the user
-            (multi-company cases), the one from the user's current company will
-            be used.
         """
         self.check_access_rights('read')
-        company_id = self.env.company.id
-        seq_ids = self.search([('code', '=', sequence_code), ('company_id', 'in', [company_id, False])], order='company_id')
+        seq_ids = self.search([('code', '=', sequence_code)])
         if not seq_ids:
-            _logger.debug("No ir.sequence has been found for code '%s'. Please make sure a sequence is set for current company." % sequence_code)
+            _logger.debug("No ir.sequence has been found for code '%s'." % sequence_code)
             return False
         seq_id = seq_ids[0]
         return seq_id._next(sequence_date=sequence_date)

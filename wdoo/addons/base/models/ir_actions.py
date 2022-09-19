@@ -573,7 +573,7 @@ class IrActionsServer(models.Model):
             'env': self.env,
             'model': model,
             # Exceptions
-            'Warning': wdoo.exceptions.Warning,
+            'Warning': wdoo.exceptions.UserError,
             'UserError': wdoo.exceptions.UserError,
             # record
             'record': record,

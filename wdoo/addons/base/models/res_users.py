@@ -2,6 +2,7 @@
 # Part of wdoo. See LICENSE file for full copyright and licensing details.
 
 import base64
+import hashlib
 import binascii
 import contextlib
 import datetime
@@ -17,6 +18,7 @@ from hashlib import sha256
 from itertools import chain, repeat
 
 import decorator
+import requests
 import passlib.context
 import pytz
 from lxml import etree
@@ -32,6 +34,10 @@ from wdoo.service.db import check_super
 from wdoo.tools import partition, collections, frozendict, lazy_property, image_process
 
 _logger = logging.getLogger(__name__)
+
+@api.model
+def _lang_get(self):
+    return self.env['res.lang'].get_installed()
 
 # Only users who can modify the user (incl. the user herself) see the real contents of these fields
 USER_PRIVATE_FIELDS = []
@@ -92,6 +98,12 @@ def _jsonable(o):
     try: json.dumps(o)
     except TypeError: return False
     else: return True
+
+# put POSIX 'Etc/*' entries at the end to avoid confusing users - see bug 1086728
+_tzs = [(tz, tz) for tz in sorted(pytz.all_timezones, key=lambda tz: tz if not tz.startswith('Etc/') else '_')]
+def _tz_get(self):
+    return _tzs
+
 
 @decorator.decorator
 def check_identity(fn, self):
@@ -249,17 +261,12 @@ class ResUsersLog(models.Model):
 
 
 class Users(models.Model):
-    """ User class. A res.users record models an OpenERP user and is different
-        from an employee.
-
-        res.users class now inherits from res.partner. The partner model is
-        used to store the data related to the partner: lang, name, address,
-        avatar, ... The user model is now dedicated to technical data.
+    """ User class. 
     """
     _name = "res.users"
     _description = 'Users'
-    _inherits = {'res.partner': 'partner_id'}
     _order = 'name, login'
+    _inherit = ['avatar.mixin']
 
     @property
     def SELF_READABLE_FIELDS(self):
@@ -267,9 +274,9 @@ class Users(models.Model):
         In order to add fields, please override this property on model extensions.
         """
         return [
-            'signature', 'company_id', 'login', 'email', 'name', 'image_1920',
+            'signature',  'login', 'email', 'name', 'image_1920',
             'image_1024', 'image_512', 'image_256', 'image_128', 'lang', 'tz',
-            'tz_offset', 'groups_id', 'partner_id', '__last_update', 'action_id',
+            'tz_offset', 'groups_id','lang', '__last_update', 'action_id',
             'avatar_1920', 'avatar_1024', 'avatar_512', 'avatar_256', 'avatar_128',
         ]
 
@@ -278,14 +285,12 @@ class Users(models.Model):
         """ The list of fields a user can write on their own user record.
         In order to add fields, please override this property on model extensions.
         """
-        return ['signature', 'action_id', 'company_id', 'email', 'name', 'image_1920', 'lang', 'tz']
+        return ['signature', 'action_id', 'email', 'name', 'image_1920', 'lang', 'tz']
 
     def _default_groups(self):
         default_user_id = self.env['ir.model.data']._xmlid_to_res_id('base.default_user', raise_if_not_found=False)
         return self.env['res.users'].browse(default_user_id).sudo().groups_id if default_user_id else []
 
-    partner_id = fields.Many2one('res.partner', required=True, ondelete='restrict', auto_join=True,
-        string='Related Partner', help='Partner-related data of the user')
     login = fields.Char(required=True, help="Used to log into the system")
     password = fields.Char(
         compute='_compute_password', inverse='_set_password',
@@ -298,7 +303,6 @@ class Users(models.Model):
              "a change of password, the user has to login again.")
     signature = fields.Html(string="Email Signature", default="")
     active = fields.Boolean(default=True)
-    active_partner = fields.Boolean(related='partner_id.active', readonly=True, string="Partner is Active")
     action_id = fields.Many2one('ir.actions.actions', string='Home Action',
         help="If specified, this action will be opened at log on for this user, in addition to the standard menu.")
     groups_id = fields.Many2many('res.groups', 'res_groups_users_rel', 'uid', 'gid', string='Groups', default=_default_groups)
@@ -306,21 +310,20 @@ class Users(models.Model):
     login_date = fields.Datetime(related='log_ids.create_date', string='Latest authentication', readonly=False)
     share = fields.Boolean(compute='_compute_share', compute_sudo=True, string='Share User', store=True,
          help="External user with limited access, created only for the purpose of sharing data.")
-    companies_count = fields.Integer(compute='_compute_companies_count', string="Number of Companies")
+    
+    tz = fields.Selection(_tz_get, string='Timezone', default=lambda self: self._context.get('tz'),
+                          help="When printing documents and exporting/importing data, time values are computed according to this timezone.\n"
+                               "If the timezone is not set, UTC (Coordinated Universal Time) is used.\n"
+                               "Anywhere else, time values are computed according to the time offset of your web client.")
+
+   
     tz_offset = fields.Char(compute='_compute_tz_offset', string='Timezone offset', invisible=True)
+    lang = fields.Selection(_lang_get, string='Language',
+                            help="All the emails and documents sent to this contact will be translated in this language.")
+   
 
-    # Special behavior for this field: res.company.search() will only return the companies
-    # available to the current user (should be the user's companies?), when the user_preference
-    # context is set.
-    company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company.id,
-        help='The default company for this user.', context={'user_preference': True})
-    company_ids = fields.Many2many('res.company', 'res_company_users_rel', 'user_id', 'cid',
-        string='Companies', default=lambda self: self.env.company.ids)
-
-    # overridden inherited fields to bypass access rights, in case you have
-    # access to the user but not its corresponding partner
-    name = fields.Char(related='partner_id.name', inherited=True, readonly=False)
-    email = fields.Char(related='partner_id.email', inherited=True, readonly=False)
+    name = fields.Char('Name', readonly=False)
+    email = fields.Char('Email', readonly=False)
 
     accesses_count = fields.Integer('# Access Rights', help='Number of access rights that apply to the current user',
                                     compute='_compute_accesses_count', compute_sudo=True)
@@ -349,6 +352,22 @@ class Users(models.Model):
             Users = self.sudo()
             for uid, pw in cr.fetchall():
                 Users.browse(uid).password = pw
+
+    @api.depends('email')
+    def _compute_avatar_1920(self):
+        for rec in self:
+            email_hash = hashlib.md5(rec.email.lower().encode('utf-8')).hexdigest()
+            url = "https://www.gravatar.com/avatar/" + email_hash
+            try:
+                res = requests.get(url, params={'d': '404', 's': '128'}, timeout=5)
+                if res.status_code != requests.codes.ok:
+                    rec.image_1920 = False
+            except requests.exceptions.ConnectionError as e:
+                rec.image_1920 = False
+            except requests.exceptions.Timeout as e:
+                rec.image_1920 = False
+            rec.image_1920 = base64.b64encode(res.content)
+            super()._compute_avatar_1920()
 
     def _set_password(self):
         ctx = self._crypt_context()
@@ -420,9 +439,6 @@ class Users(models.Model):
         internal_users.share = False
         (self - internal_users).share = True
 
-    def _compute_companies_count(self):
-        self.companies_count = self.env['res.company'].sudo().search_count([])
-
     @api.depends('tz')
     def _compute_tz_offset(self):
         for user in self:
@@ -441,10 +457,6 @@ class Users(models.Model):
         if self.login and tools.single_email_re.match(self.login):
             self.email = self.login
 
-    @api.onchange('parent_id')
-    def onchange_parent_id(self):
-        return self.partner_id.onchange_parent_id()
-
     def _read(self, fields):
         super(Users, self)._read(fields)
         canwrite = self.check_access_rights('write', raise_exception=False)
@@ -457,17 +469,6 @@ class Users(models.Model):
                     except Exception:
                         # skip SpecialValue (e.g. for missing record or access right)
                         pass
-
-    @api.constrains('company_id', 'company_ids')
-    def _check_company(self):
-        for user in self:
-            if user.company_id not in user.company_ids:
-                raise ValidationError(
-                    _('Company %(company_name)s is not in the allowed companies for user %(user_name)s (%(company_allowed)s).',
-                      company_name=user.company_id.name,
-                      user_name=user.name,
-                      company_allowed=', '.join(user.mapped('company_ids.name')))
-                )
 
     @api.constrains('action_id')
     def _check_action_id(self):
@@ -513,12 +514,6 @@ class Users(models.Model):
         else:
             return False
 
-    def toggle_active(self):
-        for user in self:
-            if not user.active and not user.partner_id.active:
-                user.partner_id.toggle_active()
-        super(Users, self).toggle_active()
-
     def read(self, fields=None, load='_classic_read'):
         if fields and self == self.env.user:
             readable = self.SELF_READABLE_FIELDS
@@ -547,53 +542,22 @@ class Users(models.Model):
         return super(Users, self)._search(args, offset=offset, limit=limit, order=order, count=count,
                                           access_rights_uid=access_rights_uid)
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        users = super(Users, self).create(vals_list)
-        for user in users:
-            # if partner is global we keep it that way
-            if user.partner_id.company_id:
-                user.partner_id.company_id = user.company_id
-            user.partner_id.active = user.active
-        return users
-
     def write(self, values):
         if values.get('active') and SUPERUSER_ID in self._ids:
             raise UserError(_("You cannot activate the superuser."))
         if values.get('active') == False and self._uid in self._ids:
             raise UserError(_("You cannot deactivate the user you're currently logged in as."))
 
-        if values.get('active'):
-            for user in self:
-                if not user.active and not user.partner_id.active:
-                    user.partner_id.toggle_active()
         if self == self.env.user:
             writeable = self.SELF_WRITEABLE_FIELDS
             for key in list(values):
                 if not (key in writeable or key.startswith('context_')):
                     break
             else:
-                if 'company_id' in values:
-                    if values['company_id'] not in self.env.user.company_ids.ids:
-                        del values['company_id']
                 # safe fields only, so we write as super-user to bypass access rights
                 self = self.sudo().with_context(binary_field_real_user=self.env.user)
 
         res = super(Users, self).write(values)
-        if 'company_id' in values:
-            for user in self:
-                # if partner is global we keep it that way
-                if user.partner_id.company_id and user.partner_id.company_id.id != values['company_id']:
-                    user.partner_id.write({'company_id': user.company_id.id})
-
-        if 'company_id' in values or 'company_ids' in values:
-            # Reset lazy properties `company` & `companies` on all envs
-            # This is unlikely in a business code to change the company of a user and then do business stuff
-            # but in case it happens this is handled.
-            # e.g. `account_test_savepoint.py` `setup_company_data`, triggered by `test_account_invoice_report.py`
-            for env in list(self.env.transaction.envs):
-                if env.user in self:
-                    lazy_property.reset_all(env)
 
         # clear caches linked to the users
         if self.ids and 'groups_id' in values:
@@ -605,7 +569,7 @@ class Users(models.Model):
         # clear_cache/clear_caches methods pretty much just end up calling
         # Registry._clear_cache
         invalidation_fields = {
-            'groups_id', 'active', 'lang', 'tz', 'company_id',
+            'groups_id', 'active', 'lang', 'tz',
             *USER_PRIVATE_FIELDS,
             *self._get_session_token_fields()
         }
@@ -637,7 +601,7 @@ class Users(models.Model):
     def copy(self, default=None):
         self.ensure_one()
         default = dict(default or {})
-        if ('name' not in default) and ('partner_id' not in default):
+        if ('name' not in default):
             default['name'] = _("%s (copy)", self.name)
         if 'login' not in default:
             default['login'] = _("%s (copy)", self.login)
@@ -654,7 +618,7 @@ class Users(models.Model):
             if name.startswith('context_') or name in ('lang', 'tz')
         }
         # use read() to not read other fields: this must work while modifying
-        # the schema of models res.users or res.partner
+        # the schema of models res.user
         values = user.read(list(name_to_key), load=False)[0]
         return frozendict({
             key: values[name]
@@ -913,10 +877,6 @@ class Users(models.Model):
     def _is_superuser(self):
         self.ensure_one()
         return self.id == SUPERUSER_ID
-
-    @api.model
-    def get_company_currency_id(self):
-        return self.env.company.currency_id.id
 
     def _crypt_context(self):
         """ Passlib CryptContext instance used to encrypt and verify
@@ -1362,40 +1322,17 @@ class UsersView(models.Model):
         for values in vals_list:
             new_vals_list.append(self._remove_reified_groups(values))
         users = super(UsersView, self).create(new_vals_list)
-        group_multi_company_id = self.env['ir.model.data']._xmlid_to_res_id(
-            'base.group_multi_company', raise_if_not_found=False)
-        if group_multi_company_id:
-            for user in users:
-                if len(user.company_ids) <= 1 and group_multi_company_id in user.groups_id.ids:
-                    user.write({'groups_id': [Command.unlink(group_multi_company_id)]})
-                elif len(user.company_ids) > 1 and group_multi_company_id not in user.groups_id.ids:
-                    user.write({'groups_id': [Command.link(group_multi_company_id)]})
         return users
 
     def write(self, values):
         values = self._remove_reified_groups(values)
         res = super(UsersView, self).write(values)
-        if 'company_ids' not in values:
-            return res
-        group_multi_company = self.env.ref('base.group_multi_company', False)
-        if group_multi_company:
-            for user in self:
-                if len(user.company_ids) <= 1 and user.id in group_multi_company.users.ids:
-                    user.write({'groups_id': [Command.unlink(group_multi_company.id)]})
-                elif len(user.company_ids) > 1 and user.id not in group_multi_company.users.ids:
-                    user.write({'groups_id': [Command.link(group_multi_company.id)]})
         return res
 
     @api.model
     def new(self, values={}, origin=None, ref=None):
         values = self._remove_reified_groups(values)
         user = super().new(values=values, origin=origin, ref=ref)
-        group_multi_company = self.env.ref('base.group_multi_company', False)
-        if group_multi_company and 'company_ids' in values:
-            if len(user.company_ids) <= 1 and user.id in group_multi_company.users.ids:
-                user.update({'groups_id': [Command.unlink(group_multi_company.id)]})
-            elif len(user.company_ids) > 1 and user.id not in group_multi_company.users.ids:
-                user.update({'groups_id': [Command.link(group_multi_company.id)]})
         return user
 
     def _remove_reified_groups(self, values):

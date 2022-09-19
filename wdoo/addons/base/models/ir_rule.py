@@ -44,17 +44,12 @@ class IrRule(models.Model):
     def _eval_context(self):
         """Returns a dictionary to use as evaluation context for
            ir.rule domains.
-           Note: company_ids contains the ids of the activated companies
-           by the user with the switch company menu. These companies are
-           filtered and trusted.
         """
         # use an empty context for 'user' to make the domain evaluation
         # independent from the context
         return {
             'user': self.env.user.with_context({}),
-            'time': time,
-            'company_ids': self.env.companies.ids,
-            'company_id': self.env.company.id,
+            'time': time
         }
 
     @api.depends('groups')
@@ -70,7 +65,7 @@ class IrRule(models.Model):
 
     def _compute_domain_keys(self):
         """ Return the list of context keys to use for caching ``_compute_domain``. """
-        return ['allowed_company_ids']
+        return []
 
     def _get_failing(self, for_records, mode='read'):
         """ Returns the rules for the mode for the current user which fail on
@@ -162,7 +157,7 @@ class IrRule(models.Model):
             v = self._context.get(k)
             if isinstance(v, list):
                 # currently this could be a frozenset (to avoid depending on
-                # the order of allowed_company_ids) but it seems safer if
+                # the order) but it seems safer if
                 # possibly slightly more miss-y to use a tuple
                 v = tuple(v)
             yield v
@@ -251,8 +246,6 @@ class IrRule(models.Model):
 
         rules_description = '\n'.join('- %s' % rule.name for rule in rules)
         failing_rules = _("This restriction is due to the following rules:\n%s", rules_description)
-        if any('company_id' in (r.domain_force or []) for r in rules):
-            failing_rules += "\n\n" + _('Note: this might be a multi-company issue.')
 
         msg = """{operation_error}
 

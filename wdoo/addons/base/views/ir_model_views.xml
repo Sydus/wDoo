@@ -134,7 +134,7 @@
                                                 the current field depends on. It is a comma-separated list of
                                                 field names, like <code>name, size</code>. You can also refer to
                                                 fields accessible through other relational fields, for instance
-                                                <code>partner_id.company_id.name</code>.</p>
+                                                <code>user_id.relation.name</code>.</p>
                                                 <p>The field <strong>Compute</strong> is the Python code to
                                                 compute the value of the field on a set of records. The value of
                                                 the field must be assigned to each record with a dictionary-like
@@ -328,7 +328,7 @@
                                     the current field depends on. It is a comma-separated list of
                                     field names, like <code>name, size</code>. You can also refer to
                                     fields accessible through other relational fields, for instance
-                                    <code>partner_id.company_id.name</code>.</p>
+                                    <code>user_id.relation.name</code>.</p>
                                     <p>The field <strong>Compute</strong> is the Python code to
                                     compute the value of the field on a set of records. The value of
                                     the field must be assigned to each record with a dictionary-like

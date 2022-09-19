@@ -178,7 +178,7 @@ class Lang(models.Model):
         """
 
         This method is called from wdoo/addons/base/data/res_lang_data.xml to load
-        some language and set it as the default for every partners. The
+        some language and set it as the default for every users. The
         language is set via tools.config by the '_initialize_db' method on the
         'db' object. This is a fragile solution and something else should be
         found.
@@ -188,13 +188,10 @@ class Lang(models.Model):
         lang_code = (tools.config.get('load_language') or 'en_US').split(',')[0]
         lang = self._activate_lang(lang_code) or self._create_lang(lang_code)
         IrDefault = self.env['ir.default']
-        default_value = IrDefault.get('res.partner', 'lang')
+        default_value = IrDefault.get('res.users', 'lang')
         if default_value is None:
-            IrDefault.set('res.partner', 'lang', lang_code)
-            # set language of main company, created directly by db bootstrap SQL
-            partner = self.env.company.partner_id
-            if not partner.lang:
-                partner.write({'lang': lang_code})
+            IrDefault.set('res.users', 'lang', lang_code)
+            
         return True
 
     @tools.ormcache('code')
@@ -283,10 +280,9 @@ class Lang(models.Model):
         if vals.get('active') == False:
             if self.env['res.users'].search_count([('lang', 'in', lang_codes)]):
                 raise UserError(_("Cannot deactivate a language that is currently used by users."))
-            if self.env['res.partner'].search_count([('lang', 'in', lang_codes)]):
-                raise UserError(_("Cannot deactivate a language that is currently used by contacts."))
-            # delete linked ir.default specifying default partner's language
-            self.env['ir.default'].discard_values('res.partner', 'lang', lang_codes)
+
+            # delete linked ir.default specifying default user's language
+            self.env['ir.default'].discard_values('res.users', 'lang', lang_codes)
 
         res = super(Lang, self).write(vals)
         self.flush()

@@ -33,11 +33,10 @@ TYPE2CLEAN = {
 
 class Property(models.Model):
     _name = 'ir.property'
-    _description = 'Company Property'
+    _description = 'Property'
 
     name = fields.Char(index=True)
     res_id = fields.Char(string='Resource', index=True, help="If not set, acts as a default value for new resources",)
-    company_id = fields.Many2one('res.company', string='Company', index=True)
     fields_id = fields.Many2one('ir.model.fields', string='Field', ondelete='cascade', required=True)
     value_float = fields.Float()
     value_integer = fields.Integer()
@@ -64,7 +63,7 @@ class Property(models.Model):
         # Ensure there is at most one active variant for each combination.
         query = """
             CREATE UNIQUE INDEX IF NOT EXISTS ir_property_unique_index
-            ON %s (fields_id, COALESCE(company_id, 0), COALESCE(res_id, ''))
+            ON %s (fields_id, COALESCE(res_id, ''))
         """
         self.env.cr.execute(query % self._table)
 
@@ -176,19 +175,17 @@ class Property(models.Model):
         return False
 
     @api.model
-    def _set_default(self, name, model, value, company=False):
-        """ Set the given field's generic value for the given company.
+    def _set_default(self, name, model, value):
+        """ Set the given field's generic value.
 
         :param name: the field's name
         :param model: the field's model name
         :param value: the field's value
-        :param company: the company (record or id)
+
         """
         field_id = self.env['ir.model.fields']._get(model, name).id
-        company_id = int(company) if company else False
         prop = self.sudo().search([
             ('fields_id', '=', field_id),
-            ('company_id', '=', company_id),
             ('res_id', '=', False),
         ])
         if prop:
@@ -196,7 +193,6 @@ class Property(models.Model):
         else:
             prop.create({
                 'fields_id': field_id,
-                'company_id': company_id,
                 'res_id': False,
                 'name': name,
                 'value': value,
@@ -225,8 +221,8 @@ class Property(models.Model):
 
     # only cache Property._get(res_id=False) as that's
     # sub-optimally.
-    COMPANY_KEY = "self.env.company.id"
-    @ormcache(COMPANY_KEY, 'name', 'model')
+ 
+    @ormcache('name', 'model')
     def _get_default_property(self, name, model):
         prop = self._get_property(name, model, res_id=False)
         if not prop:
@@ -242,16 +238,16 @@ class Property(models.Model):
             if res_id and isinstance(res_id, int):
                 res_id = "%s,%s" % (model, res_id)
             domain = [('res_id', '=', res_id)] + domain
-            #make the search with company_id asc to make sure that properties specific to a company are given first
-            return self.sudo().search(domain, limit=1, order='company_id')
+            
+            return self.sudo().search(domain, limit=1)
         return self.sudo().browse(())
 
     def _get_domain(self, prop_name, model):
         field_id = self.env['ir.model.fields']._get(model, prop_name).id
         if not field_id:
             return None
-        company_id = self.env.company.id
-        return [('fields_id', '=', field_id), ('company_id', 'in', [company_id, False])]
+        
+        return [('fields_id', '=', field_id)]
 
     @api.model
     def _get_multi(self, name, model, ids):
@@ -264,7 +260,7 @@ class Property(models.Model):
 
         field = self.env[model]._fields[name]
         field_id = self.env['ir.model.fields']._get(model, name).id
-        company_id = self.env.company.id
+   
 
         if field.type == 'many2one':
             comodel = self.env[field.comodel_name]
@@ -278,11 +274,10 @@ class Property(models.Model):
                 FROM ir_property p
                 LEFT JOIN {} r ON substr(p.value_reference, %s)::integer=r.id
                 WHERE p.fields_id=%s
-                    AND (p.company_id=%s OR p.company_id IS NULL)
                     AND (p.res_id IN %s OR p.res_id IS NULL)
-                ORDER BY p.company_id NULLS FIRST
+                ORDER BY p.id NULLS FIRST
             """.format(comodel._table)
-            params = [model_pos, value_pos, field_id, company_id]
+            params = [model_pos, value_pos, field_id]
             clean = comodel.browse
 
         elif field.type in TYPE2FIELD:
@@ -292,11 +287,10 @@ class Property(models.Model):
                 SELECT substr(p.res_id, %s)::integer, p.{}
                 FROM ir_property p
                 WHERE p.fields_id=%s
-                    AND (p.company_id=%s OR p.company_id IS NULL)
                     AND (p.res_id IN %s OR p.res_id IS NULL)
-                ORDER BY p.company_id NULLS FIRST
+                ORDER BY p.id NULLS FIRST
             """.format(TYPE2FIELD[field.type])
-            params = [model_pos, field_id, company_id]
+            params = [model_pos, field_id]
             clean = TYPE2CLEAN[field.type]
 
         else:
@@ -343,11 +337,10 @@ class Property(models.Model):
 
         # retrieve the properties corresponding to the given record ids
         field_id = self.env['ir.model.fields']._get(model, name).id
-        company_id = self.env.company.id
+
         refs = {('%s,%s' % (model, id)): id for id in values}
         props = self.sudo().search([
             ('fields_id', '=', field_id),
-            ('company_id', '=', company_id),
             ('res_id', 'in', list(refs)),
         ])
 
@@ -369,7 +362,6 @@ class Property(models.Model):
             if value != default_value:
                 vals_list.append({
                     'fields_id': field_id,
-                    'company_id': company_id,
                     'res_id': ref,
                     'name': name,
                     'value': value,

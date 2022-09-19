@@ -392,7 +392,7 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
                         toolbar=False, submenu=False):
         ret_val = super(ResConfigSettings, self).fields_view_get(
             view_id=view_id, view_type=view_type,
-            toolbar=toolbar, submenu=submenu)
+            toolbar=toolbar)
 
         can_install_modules = self.env['ir.module.module'].check_access_rights(
                                     'write', raise_exception=False)
@@ -758,8 +758,7 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
         for field in self._fields.values():
             if not (field.name in values and field.related and not field.readonly):
                 continue
-            # we write on a related field like
-            # qr_code = fields.Boolean(related='company_id.qr_code', readonly=False)
+            # we write on a related field 
             fname0 = field.related[0]
             if fname0 not in values:
                 continue

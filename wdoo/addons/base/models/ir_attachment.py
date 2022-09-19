@@ -337,8 +337,6 @@ class IrAttachment(models.Model):
     res_field = fields.Char('Resource Field', readonly=True)
     res_id = fields.Many2oneReference('Resource ID', model_field='res_model',
                                       readonly=True, help="The record id this is attached to.")
-    company_id = fields.Many2one('res.company', string='Company', change_default=True,
-                                 default=lambda self: self.env.company)
     type = fields.Selection([('url', 'URL'), ('binary', 'File')],
                             string='Type', required=True, default='binary', change_default=True,
                             help="You can either upload a file from your computer or copy/paste an internet link to your file.")
@@ -424,7 +422,7 @@ class IrAttachment(models.Model):
 
 
     def _read_group_allowed_fields(self):
-        return ['type', 'company_id', 'res_id', 'create_date', 'create_uid', 'name', 'mimetype', 'id', 'url', 'res_field', 'res_model']
+        return ['type', 'res_id', 'create_date', 'create_uid', 'name', 'mimetype', 'id', 'url', 'res_field', 'res_model']
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):

@@ -22,7 +22,6 @@
                             <field name="res_field"/>
                             <field name="res_id"/>
                             <field name="res_name"/>
-                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
                             <field name="public"/>
                         </group>
                         <group string="History" groups="base.group_no_one" attrs="{'invisible':[('create_date','=',False)]}">
@@ -53,7 +52,7 @@
                     <field name="res_id"/>
                     <field name="type"/>
                     <field name="file_size"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
+              
                     <field name="create_uid"/>
                     <field name="create_date"/>
                 </tree>
@@ -77,7 +76,6 @@
                     <group expand="0" string="Group By">
                         <filter name="owner" string="Owner" domain="[]" context="{'group_by':'create_uid'}"/>
                         <filter string="Type" name="type" domain="[]" context="{'group_by':'type'}" groups="base.group_no_one"/>
-                        <filter string="Company" name="company" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
                         <filter string="Creation Date" name="creation_month" domain="[]" context="{'group_by':'create_date'}"/>
                     </group>
                 </search>
