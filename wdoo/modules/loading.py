@@ -348,7 +348,7 @@ def load_marked_modules(cr, graph, states, force, progressdict, report,
         graph.add_modules(cr, module_list, force)
         _logger.debug('Updating graph with %d more modules', len(module_list))
         loaded, processed = load_module_graph(
-            cr, graph, progressdict, report=report, skip_modules=loaded_modules,
+            cr, graph, report=report, skip_modules=loaded_modules,
             perform_checks=perform_checks, models_to_check=models_to_check
         )
         processed_modules.extend(processed)
@@ -383,8 +383,7 @@ def load_modules(registry, force_demo=False, status=None, update_module=False):
             wdoo.modules.db.initialize(cr)
             update_module = True # process auto-installed modules
             tools.config["init"]["all"] = 1
-            if not tools.config['without_demo']:
-                tools.config["demo"]['all'] = 1
+            
 
         if 'base' in tools.config['update'] or 'all' in tools.config['update']:
             cr.execute("update ir_module_module set state=%s where name=%s and state=%s", ('to upgrade', 'base', 'installed'))
@@ -400,7 +399,7 @@ def load_modules(registry, force_demo=False, status=None, update_module=False):
         # loaded_modules: to avoid double loading
         report = registry._assertion_report
         loaded_modules, processed_modules = load_module_graph(
-            cr, graph, status, perform_checks=update_module,
+            cr, graph, perform_checks=update_module,
             report=report, models_to_check=models_to_check)
 
         load_lang = tools.config.pop('load_language')

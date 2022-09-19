@@ -235,7 +235,7 @@ class Cursor(BaseCursor):
         else:
             self.__caller = False
         self._closed = False   # real initialisation value
-        self.autocommit(False)
+        self.autocommit()
 
         self._default_log_exceptions = True
 

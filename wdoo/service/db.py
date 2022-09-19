@@ -51,7 +51,7 @@ def check_super(passwd):
     raise wdoo.exceptions.AccessDenied()
 
 # This should be moved to wdoo.modules.db, along side initialize().
-def _initialize_db(id, db_name, demo, lang, user_password, login='admin', country_code=None, phone=None):
+def _initialize_db(id, db_name, demo, lang, user_password, login='admin', tz=None, phone=None):
     try:
         db = wdoo.sql_db.db_connect(db_name)
         with closing(db.cursor()) as cr:
@@ -69,14 +69,11 @@ def _initialize_db(id, db_name, demo, lang, user_password, login='admin', countr
                 modules = env['ir.module.module'].search([('state', '=', 'installed')])
                 modules._update_translations(lang)
 
-            if country_code:
-                country = env['res.country'].search([('code', 'ilike', country_code)])[0]
-                env['res.company'].browse(1).write({'country_id': country_code and country.id, 'currency_id': country_code and country.currency_id.id})
-                if len(country_timezones.get(country_code, [])) == 1:
-                    users = env['res.users'].search([])
-                    users.write({'tz': country_timezones[country_code][0]})
-            if phone:
-                env['res.company'].browse(1).write({'phone': phone})
+            if tz:
+                users = env['res.users'].search([])
+                users.write({'tz': tz})
+
+           
             if '@' in login:
                 env['res.company'].browse(1).write({'email': login})
 
@@ -124,11 +121,11 @@ def _create_empty_database(name):
             pass
 
 @check_db_management_enabled
-def exp_create_database(db_name, demo, lang, user_password='admin', login='admin', country_code=None, phone=None):
+def exp_create_database(db_name, demo, lang, user_password='admin', login='admin', tz=None, phone=None):
     """ Similar to exp_create but blocking."""
     _logger.info('Create database `%s`.', db_name)
     _create_empty_database(db_name)
-    _initialize_db(id, db_name, demo, lang, user_password, login, country_code, phone)
+    _initialize_db(id, db_name, demo, lang, user_password, login, tz, phone)
     return True
 
 @check_db_management_enabled
@@ -429,15 +426,6 @@ def exp_list(document=False):
 
 def exp_list_lang():
     return wdoo.tools.scan_languages()
-
-def exp_list_countries():
-    list_countries = []
-    root = ET.parse(os.path.join(wdoo.tools.config['root_path'], 'addons/base/data/res_country_data.xml')).getroot()
-    for country in root.find('data').findall('record[@model="res.country"]'):
-        name = country.find('field[@name="name"]').text
-        code = country.find('field[@name="code"]').text
-        list_countries.append([code, name])
-    return sorted(list_countries, key=lambda c: c[1])
 
 def exp_server_version():
     """ Return the version of the server

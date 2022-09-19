@@ -292,7 +292,6 @@
                     <rng:ref name="template" />
                     <rng:ref name="delete" />
                     <rng:ref name="act_window" />
-                    <rng:ref name="report" />
                     <rng:ref name="function" />
                 </rng:choice>
             </rng:zeroOrMore>

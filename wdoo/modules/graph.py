@@ -80,7 +80,7 @@ class Graph(dict):
                 later.clear()
                 current.remove(package)
                 node = self.add_node(package, info)
-                for kind in ('init', 'demo', 'update'):
+                for kind in ('init', 'update'):
                     if package in tools.config[kind] or 'all' in tools.config[kind] or kind in force:
                         setattr(node, kind, True)
             else:

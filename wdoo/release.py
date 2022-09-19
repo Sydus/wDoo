@@ -16,8 +16,8 @@ version_info = (0, 0, 1, BETA, 0, '')
 version = '.'.join(str(s) for s in version_info[:2]) + RELEASE_LEVELS_DISPLAY[version_info[3]] + str(version_info[4] or '') + version_info[5]
 series = serie = major_version = '.'.join(str(s) for s in version_info[:2])
 
-product_name = 'wdoo'
-description = 'wdoo Server'
+product_name = 'Wdoo'
+description = 'Wdoo Server'
 long_desc = '''wdoo is a web application framework. Technical features include
 a distributed server, an object database, a dynamic GUI and XML-RPC interfaces.
 '''
@@ -26,7 +26,7 @@ License :: OSI Approved :: BSD 3-Clause License
 Programming Language :: Python
 """
 url = 'https://www.sydus.it'
-author = 'Sydus srls'
+author = 'Sydus srls, Odoo S.A.'
 author_email = 'info@sydus.it'
 license = 'BSD 3-Clause'
 

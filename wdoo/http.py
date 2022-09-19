@@ -246,7 +246,7 @@ class WebRequest(object):
 
     @lazy_property
     def session(self):
-        """ :class:`OpenERPSession` holding the HTTP session data for the
+        """ :class:`WdooSession` holding the HTTP session data for the
         current http session
         """
         return self.httprequest.session
@@ -785,8 +785,8 @@ class HttpRequest(WebRequest):
 
 wdoo URLs are CSRF-protected by default (when accessed with unsafe
 HTTP methods). See
-https://www.wdoo.com/documentation/15.0/developer/reference/addons/http.html#csrf for
-more details.
+https://www.odoo.com/documentation/15.0/developer/reference/addons/http.html#csrf for
+more details. # TODO change url
 
 * if this endpoint is accessed through wdoo via py-QWeb form, embed a CSRF
   token in the form, Tokens are available via `request.csrf_token()`
@@ -990,12 +990,12 @@ class AuthenticationError(Exception):
 class SessionExpiredException(Exception):
     pass
 
-class OpenERPSession(sessions.Session):
+class WdooSession(sessions.Session):
     def __init__(self, *args, **kwargs):
         self.inited = False
         self.modified = False
         self.rotate = False
-        super(OpenERPSession, self).__init__(*args, **kwargs)
+        super(WdooSession, self).__init__(*args, **kwargs)
         self.inited = True
         self._default_values()
         self.modified = False
@@ -1103,10 +1103,6 @@ class OpenERPSession(sessions.Session):
         """
         lang = context.get('lang')
 
-        # inane OpenERP locale
-        if lang == 'ar_AR':
-            lang = 'ar'
-
         # lang to lang_REGION (datejs only handles lang_REGION, no bare langs)
         if lang in babel.core.LOCALE_ALIASES:
             lang = babel.core.LOCALE_ALIASES[lang]
@@ -1199,9 +1195,9 @@ def session_gc(session_store):
             except OSError:
                 pass
 
-wdoo_DISABLE_SESSION_GC = str2bool(os.environ.get('wdoo_DISABLE_SESSION_GC', '0'))
+WDOO_DISABLE_SESSION_GC = str2bool(os.environ.get('WDOO_DISABLE_SESSION_GC', '0'))
 
-if wdoo_DISABLE_SESSION_GC:
+if WDOO_DISABLE_SESSION_GC:
     # empty function, in case another module would be
     # calling it out of setup_session()
     session_gc = lambda s: None
@@ -1285,7 +1281,7 @@ class DisableCacheMiddleware(object):
         def start_wrapped(status, headers):
             req = werkzeug.wrappers.Request(environ)
             root.setup_session(req)
-            if req.session and req.session.debug and not 'wkhtmltopdf' in req.headers.get('User-Agent'):
+            if req.session and req.session.debug:
 
                 if "assets" in req.session.debug and (".js" in req.base_url or ".css" in req.base_url):
                     new_headers = [('Cache-Control', 'no-store')]
@@ -1312,10 +1308,10 @@ class Root(object):
         # Setup http sessions
         path = wdoo.tools.config.session_dir
         _logger.debug('HTTP sessions stored in: %s', path)
-        if wdoo_DISABLE_SESSION_GC:
+        if WDOO_DISABLE_SESSION_GC:
             _logger.info('Default session GC disabled, manual GC required.')
         return sessions.FilesystemSessionStore(
-            path, session_class=OpenERPSession, renew_missing=True)
+            path, session_class=WdooSession, renew_missing=True)
 
     @lazy_property
     def nodb_routing_map(self):
@@ -1369,7 +1365,7 @@ class Root(object):
         sid = httprequest.args.get('session_id')
         explicit_session = True
         if not sid:
-            sid =  httprequest.headers.get("X-Openerp-Session-Id")
+            sid =  httprequest.headers.get("X-wDoo-Session-Id")
         if not sid:
             sid = httprequest.cookies.get('session_id')
             explicit_session = False
@@ -1521,12 +1517,7 @@ class Root(object):
                         # - the database version doesn't match the server version
                         # Log the user out and fall back to nodb
                         request.session.logout()
-                        if request.httprequest.path == '/web':
-                            # Internal Server Error
-                            raise
-                        else:
-                            # If requesting /web this will loop
-                            result = _dispatch_nodb()
+                        result = _dispatch_nodb()
                     else:
                         result = ir_http._dispatch()
                 else:
@@ -1581,13 +1572,23 @@ def db_list(force=False, httprequest=None):
 
 def db_filter(dbs, httprequest=None):
     httprequest = httprequest or request.httprequest
+
+    index = int(wdoo.tools.config['dbfilter_subdomain_index']) or 0 
+
     h = httprequest.environ.get('HTTP_HOST', '').split(':')[0]
-    d, _, r = h.partition('.')
+    d, *r = h.split('.')[index]
     if d == "www" and r:
-        d = r.partition('.')[0]
+        d = r.partition('.')
+
+    custom_val = ''
+    if wdoo.tools.config['dbfilter_placeholder']:
+        matches = re.match(wdoo.tools.config['dbfilter_placeholder'] or '.*', h)
+        if len(matches.groups()) > 0:
+            custom_val = matches.group(1)
+
     if wdoo.tools.config['dbfilter']:
         d, h = re.escape(d), re.escape(h)
-        r = wdoo.tools.config['dbfilter'].replace('%h', h).replace('%d', d)
+        r = wdoo.tools.config['dbfilter'].replace('%h', h).replace('%d', d).replace('%c', custom_val)
         dbs = [i for i in dbs if re.match(r, i)]
     elif wdoo.tools.config['db_name']:
         # In case --db-filter is not provided and --database is passed, wdoo will

@@ -30,9 +30,6 @@ class UserError(Exception):
 
     @property
     def name(self):
-        warnings.warn(
-            "UserError attribute 'name' is a deprecated alias to args[0]",
-            DeprecationWarning)
         return self.args[0]
 
 
@@ -52,9 +49,6 @@ class RedirectWarning(Exception):
     # using this RedirectWarning won't crash if used as an UserError
     @property
     def name(self):
-        warnings.warn(
-            "RedirectWarning attribute 'name' is a deprecated alias to args[0]",
-            DeprecationWarning)
         return self.args[0]
 
 

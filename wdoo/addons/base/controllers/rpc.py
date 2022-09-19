@@ -97,5 +97,5 @@ class RPC(Controller):
 
     @route('/jsonrpc', type='json', auth="none", save_session=False)
     def jsonrpc(self, service, method, args):
-        """ Method used by client APIs to contact OpenERP. """
+        """ Method used by client APIs to contact wdoo. """
         return dispatch_rpc(service, method, args)

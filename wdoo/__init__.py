@@ -14,6 +14,7 @@ __path__ = [
     os.path.abspath(path)
     for path in pkgutil.extend_path(__path__, __name__)
 ]
+print(__path__)
 
 import sys
 assert sys.version_info > (3, 7), "Outdated python version detected, wdoo requires Python >= 3.7 to run."
@@ -99,6 +100,7 @@ from . import release
 from . import service
 from . import sql_db
 from . import tools
+from . import tests
 
 #----------------------------------------------------------
 # Model classes, fields, api decorators, and translations

@@ -1725,15 +1725,11 @@ class BaseModel(metaclass=MetaModel):
         if toolbar:
             vt = 'list' if view_type == 'tree' else view_type
             bindings = self.env['ir.actions.actions'].get_bindings(self._name)
-            resreport = [action
-                         for action in bindings['report']
-                         if vt in (action.get('binding_view_types') or vt).split(',')]
             resaction = [action
                          for action in bindings['action']
                          if vt in (action.get('binding_view_types') or vt).split(',')]
 
             result['toolbar'] = {
-                'print': resreport,
                 'action': resaction,
             }
         return result
@@ -4025,16 +4021,6 @@ Fields:
                 field = self._fields.get(key)
                 if not field:
                     raise ValueError("Invalid field %r on model %r" % (key, self._name))
-                if field.company_dependent:
-                    irprop_def = self.env['ir.property']._get(key, self._name)
-                    cached_def = field.convert_to_cache(irprop_def, self)
-                    cached_val = field.convert_to_cache(val, self)
-                    if cached_val == cached_def:
-                        # val is the same as the default value defined in
-                        # 'ir.property'; by design, 'ir.property' will not
-                        # create entries specific to these records; skipping the
-                        # field inverse saves 4 SQL queries
-                        continue
                 if field.store:
                     stored[key] = val
                 if field.inherited:
@@ -4091,7 +4077,7 @@ Fields:
                 # If a field is not stored, its inverse method will probably
                 # write on its dependencies, which will invalidate the field on
                 # all records. We therefore inverse the field record by record.
-                if all(field.store or field.company_dependent for field in fields):
+                if all(field.store for field in fields):
                     batches = [rec_vals]
                 else:
                     batches = [[rec_data] for rec_data in rec_vals]

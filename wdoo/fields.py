@@ -132,20 +132,6 @@ class Field(MetaField('DummyField', (object,), {})):
     :param str groups: comma-separated list of group xml ids (string); this
         restricts the field access to the users of the given groups only
 
-    :param bool company_dependent: whether the field value is dependent of the current company;
-
-        The value isn't stored on the model table.  It is registered as `ir.property`.
-        When the value of the company_dependent field is needed, an `ir.property`
-        is searched, linked to the current company (and current record if one property
-        exists).
-
-        If the value is changed on the record, it either modifies the existing property
-        for the current record (if one exists), or creates a new one for the current company
-        and res_id.
-
-        If the value is changed on the company side, it will impact all records on which
-        the value hasn't been changed.
-
     :param bool copy: whether the field value should be copied when the record
         is duplicated (default: ``True`` for normal fields, ``False`` for
         ``one2many`` and computed fields, including property fields and
@@ -240,7 +226,6 @@ class Field(MetaField('DummyField', (object,), {})):
     inverse = None                      # inverse(recs) inverses field on recs
     search = None                       # search(recs, operator, value) searches on self
     related = None                      # sequence of field names, for related fields
-    company_dependent = False           # whether ``self`` is company-dependent (property field)
     default = None                      # default(recs) returns the default value
 
     string = None                       # field label
@@ -385,18 +370,6 @@ class Field(MetaField('DummyField', (object,), {})):
             attrs['compute_sudo'] = attrs.get('compute_sudo', attrs.get('related_sudo', True))
             attrs['copy'] = attrs.get('copy', False)
             attrs['readonly'] = attrs.get('readonly', True)
-        if attrs.get('company_dependent'):
-            # by default, company-dependent fields are not stored, not computed
-            # in superuser mode and not copied
-            attrs['store'] = False
-            attrs['compute_sudo'] = attrs.get('compute_sudo', False)
-            attrs['copy'] = attrs.get('copy', False)
-            attrs['default'] = attrs.get('default', self._default_company_dependent)
-            attrs['compute'] = self._compute_company_dependent
-            if not attrs.get('readonly'):
-                attrs['inverse'] = self._inverse_company_dependent
-            attrs['search'] = self._search_company_dependent
-            attrs['depends_context'] = attrs.get('depends_context', ()) + ('company',)
         if attrs.get('translate'):
             # by default, translatable fields are context-dependent
             attrs['depends_context'] = attrs.get('depends_context', ()) + ('lang',)
@@ -664,34 +637,6 @@ class Field(MetaField('DummyField', (object,), {})):
         """
         return self.store and self.column_type
 
-    #
-    # Company-dependent fields
-    #
-
-    def _default_company_dependent(self, model):
-        return model.env['ir.property']._get(self.name, self.model_name)
-
-    def _compute_company_dependent(self, records):
-        # read property as superuser, as the current user may not have access
-        Property = records.env['ir.property'].sudo()
-        values = Property._get_multi(self.name, self.model_name, records.ids)
-        for record in records:
-            record[self.name] = values.get(record.id)
-
-    def _inverse_company_dependent(self, records):
-        # update property as superuser, as the current user may not have access
-        Property = records.env['ir.property'].sudo()
-        values = {
-            record.id: self.convert_to_write(record[self.name], record)
-            for record in records
-        }
-        Property._set_multi(self.name, self.model_name, values)
-
-    def _search_company_dependent(self, records, operator, value):
-        Property = records.env['ir.property'].sudo()
-        return Property.search_multi(self.name, self.model_name, operator, value)
-
-    #
     # Setup of field triggers
     #
 
@@ -756,7 +701,6 @@ class Field(MetaField('DummyField', (object,), {})):
     _description_store = property(attrgetter('store'))
     _description_manual = property(attrgetter('manual'))
     _description_related = property(attrgetter('related'))
-    _description_company_dependent = property(attrgetter('company_dependent'))
     _description_readonly = property(attrgetter('readonly'))
     _description_required = property(attrgetter('required'))
     _description_states = property(attrgetter('states'))
@@ -1442,96 +1386,6 @@ class Float(Field):
     compare = staticmethod(float_compare)
 
 
-class Monetary(Field):
-    """ Encapsulates a :class:`float` expressed in a given
-    :class:`res_currency<wdoo.addons.base.models.res_currency.Currency>`.
-
-    The decimal precision and currency symbol are taken from the ``currency_field`` attribute.
-
-    :param str currency_field: name of the :class:`Many2one` field
-        holding the :class:`res_currency <wdoo.addons.base.models.res_currency.Currency>`
-        this monetary field is expressed in (default: `\'currency_id\'`)
-    """
-    type = 'monetary'
-    write_sequence = 10
-
-    column_type = ('numeric', 'numeric')
-    column_cast_from = ('float8',)
-
-    currency_field = None
-    group_operator = 'sum'
-
-    def __init__(self, string=Default, currency_field=Default, **kwargs):
-        super(Monetary, self).__init__(string=string, currency_field=currency_field, **kwargs)
-
-    def _description_currency_field(self, env):
-        return self.get_currency_field(env[self.model_name])
-
-    def get_currency_field(self, model):
-        """ Return the name of the currency field. """
-        return self.currency_field or (
-            'currency_id' if 'currency_id' in model._fields else
-            'x_currency_id' if 'x_currency_id' in model._fields else
-            None
-        )
-
-    def setup_nonrelated(self, model):
-        super().setup_nonrelated(model)
-        assert self.get_currency_field(model) in model._fields, \
-            "Field %s with unknown currency_field %r" % (self, self.get_currency_field(model))
-
-    def setup_related(self, model):
-        super().setup_related(model)
-        if self.inherited:
-            self.currency_field = self.related_field.get_currency_field(model.env[self.related_field.model_name])
-        assert self.get_currency_field(model) in model._fields, \
-            "Field %s with unknown currency_field %r" % (self, self.get_currency_field(model))
-
-    def convert_to_column(self, value, record, values=None, validate=True):
-        # retrieve currency from values or record
-        currency_field = self.get_currency_field(record)
-        if values and currency_field in values:
-            field = record._fields[currency_field]
-            currency = field.convert_to_cache(values[currency_field], record, validate)
-            currency = field.convert_to_record(currency, record)
-        else:
-            # Note: this is wrong if 'record' is several records with different
-            # currencies, which is functional nonsense and should not happen
-            # BEWARE: do not prefetch other fields, because 'value' may be in
-            # cache, and would be overridden by the value read from database!
-            currency = record[:1].with_context(prefetch_fields=False)[currency_field]
-
-        value = float(value or 0.0)
-        if currency:
-            return float_repr(currency.round(value), currency.decimal_places)
-        return value
-
-    def convert_to_cache(self, value, record, validate=True):
-        # cache format: float
-        value = float(value or 0.0)
-        if value and validate:
-            # FIXME @rco-wdoo: currency may not be already initialized if it is
-            # a function or related field!
-            # BEWARE: do not prefetch other fields, because 'value' may be in
-            # cache, and would be overridden by the value read from database!
-            currency_field = self.get_currency_field(record)
-            currency = record.sudo().with_context(prefetch_fields=False)[currency_field]
-            if len(currency) > 1:
-                raise ValueError("Got multiple currencies while assigning values of monetary field %s" % str(self))
-            elif currency:
-                value = currency.round(value)
-        return value
-
-    def convert_to_record(self, value, record):
-        return value or 0.0
-
-    def convert_to_read(self, value, record, use_name_get=True):
-        return value
-
-    def convert_to_write(self, value, record):
-        return value
-
-
 class _String(Field):
     """ Abstract class for string fields. """
     translate = False                   # whether the field is translated
@@ -1888,7 +1742,7 @@ class Date(Field):
         return (context_today or today).date()
 
     @staticmethod
-    def to_date(value):
+    def to_date(value, f : str = DATE_FORMAT):
         """Attempt to convert ``value`` to a :class:`date` object.
 
         .. warning::
@@ -1899,6 +1753,7 @@ class Date(Field):
 
         :param value: value to convert.
         :type value: str or date or datetime
+        :param str format: format of the string to convert.
         :return: an object representing ``value``.
         :rtype: date or None
         """
@@ -1909,23 +1764,24 @@ class Date(Field):
                 return value.date()
             return value
         value = value[:DATE_LENGTH]
-        return datetime.strptime(value, DATE_FORMAT).date()
+        return datetime.strptime(value, format).date()
 
     # kept for backwards compatibility, but consider `from_string` as deprecated, will probably
     # be removed after V12
     from_string = to_date
 
     @staticmethod
-    def to_string(value):
+    def to_string(value, f : str = DATE_FORMAT):
         """
         Convert a :class:`date` or :class:`datetime` object to a string.
 
         :param value: value to convert.
+        :param str format: format of the string to convert.
         :return: a string representing ``value`` in the server's date format, if ``value`` is of
             type :class:`datetime`, the hours, minute, seconds, tzinfo will be truncated.
         :rtype: str
         """
-        return value.strftime(DATE_FORMAT) if value else False
+        return value.strftime(f) if value else False
 
     def convert_to_cache(self, value, record, validate=True):
         if not value:
@@ -1996,10 +1852,11 @@ class Datetime(Field):
         return utc_timestamp
 
     @staticmethod
-    def to_datetime(value):
+    def to_datetime(value, f : str = DATETIME_FORMAT):
         """Convert an ORM ``value`` into a :class:`datetime` value.
 
         :param value: value to convert.
+        :param str format: format of the string to convert.
         :type value: str or date or datetime
         :return: an object representing ``value``.
         :rtype: datetime or None
@@ -2014,24 +1871,25 @@ class Datetime(Field):
             return datetime.combine(value, time.min)
 
         # TODO: fix data files
-        return datetime.strptime(value, DATETIME_FORMAT[:len(value)-2])
+        return datetime.strptime(value, f[:len(value)-2])
 
     # kept for backwards compatibility, but consider `from_string` as deprecated, will probably
     # be removed after V12
     from_string = to_datetime
 
     @staticmethod
-    def to_string(value):
+    def to_string(value, f : str = DATETIME_FORMAT):
         """Convert a :class:`datetime` or :class:`date` object to a string.
 
         :param value: value to convert.
+        :param str format: format of the string to convert.
         :type value: datetime or date
         :return: a string representing ``value`` in the server's datetime format,
             if ``value`` is of type :class:`date`,
             the time portion will be midnight (00:00:00).
         :rtype: str
         """
-        return value.strftime(DATETIME_FORMAT) if value else False
+        return value.strftime(f) if value else False
 
     def convert_to_cache(self, value, record, validate=True):
         return self.to_datetime(value)

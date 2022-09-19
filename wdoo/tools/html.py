@@ -11,6 +11,8 @@ from wdoo.tools import misc
 
 _logger = logging.getLogger(__name__)
 
+# matches a string containing only one email
+single_email_re = re.compile(r"""^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$""", re.VERBOSE)
 allowed_tags = clean.defs.tags | frozenset('article bdi section header footer hgroup nav aside figure main'.split() + [etree.Comment])
 tags_to_kill = ['base', 'embed', 'frame', 'head', 'iframe', 'link', 'meta',
                 'noscript', 'object', 'script', 'style', 'title']

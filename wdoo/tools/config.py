@@ -145,6 +145,12 @@ class configmanager(object):
         group.add_option("--db-filter", dest="dbfilter", my_default='', metavar="REGEXP",
                          help="Regular expressions for filtering available databases for Web UI. "
                               "The expression can use %d (domain) and %h (host) placeholders.")
+        group.add_option("--db-subdomain-index", dest="dbfilter_subdomain_index", my_default=0, metavar="REGEXP",
+                         help="Index of subdomain to use for database filtering. ")
+
+        group.add_option("--dbfilter-placeholder", dest="dbfilter_placeholder", my_default='', metavar="REGEXP",
+                         help="Index of subdomain to use for database filtering. ")
+
         parser.add_option_group(group)
 
         # Testing Group

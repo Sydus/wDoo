@@ -107,7 +107,8 @@ class Registry(Mapping):
         self.models = {}    # model name/model instance mapping
         self._sql_constraints = set()
         self._init = True
-        self._assertion_report = wdoo.tests.runner.wdooTestResult()
+        print(dir(wdoo))
+        self._assertion_report = wdoo.tests.runner.WdooTestResult()
         self._fields_by_model = None
         self._ordinary_tables = None
         self._constraint_queue = deque()

@@ -131,8 +131,7 @@ def ondelete(*, at_uninstall):
     Mark a method to be executed during :meth:`~wdoo.models.BaseModel.unlink`.
     The goal of this decorator is to allow client-side errors when unlinking
     records if, from a business point of view, it does not make sense to delete
-    such records. For instance, a user should not be able to delete a validated
-    sales order.
+    such records.
     While this could be implemented by simply overriding the method ``unlink``
     on the model, it has the drawback of not being compatible with module
     uninstallation. When uninstalling the module, the override could raise user
@@ -181,9 +180,9 @@ def onchange(*args):
     pseudo-record that contains the values present in the form. Field
     assignments on that record are automatically sent back to the client.
     Each argument must be a field name::
-        @api.onchange('partner_id')
-        def _onchange_partner(self):
-            self.message = "Dear %s" % (self.partner_id.name or "")
+        @api.onchange('example_id')
+        def _onchange_example(self):
+            self.message = "Dear %s" % (self.example.name or "")
     .. code-block:: python
         return {
             'warning': {'title': "Warning", 'message': "What is this?", 'type': 'notification'},
@@ -192,7 +191,7 @@ def onchange(*args):
     Otherwise it will be displayed in a dialog as default.
     .. warning::
         ``@onchange`` only supports simple field names, dotted names
-        (fields of relational fields e.g. ``partner_id.tz``) are not
+        (fields of relational fields e.g. ``example.tz``) are not
         supported and will be ignored
     .. danger::
         Since ``@onchange`` returns a recordset of pseudo-records,
@@ -204,7 +203,7 @@ def onchange(*args):
         above or call the :meth:`update` method.
     .. warning::
         It is not possible for a ``one2many`` or ``many2many`` field to modify
-        itself via onchange. This is a webclient limitation - see `#2693 <https://github.com/wdoo/wdoo/issues/2693>`_.
+        itself via onchange. This is a webclient limitation - see `#2693 <https://github.com/odoo/odoo/issues/2693>`_.
     """
     return attrsetter('_onchange', args)
 
@@ -420,22 +419,6 @@ class Environment(Mapping):
         names to new api models. It also holds a cache for records, and a data
         structure to manage recomputations.
     """
-    @classproperty
-    def envs(cls):
-        raise NotImplementedError(
-            "Since wdoo 15.0, Environment.envs no longer works; "
-            "use cr.transaction or env.transaction instead."
-        )
-
-    @classmethod
-    @contextmanager
-    def manage(cls):
-        warnings.warn(
-            "Since wdoo 15.0, Environment.manage() is useless.",
-            DeprecationWarning, stacklevel=2,
-        )
-        yield
-
     def reset(self):
         """ Reset the transaction, see :meth:`Transaction.reset`. """
         self.transaction.reset()
@@ -549,66 +532,6 @@ class Environment(Mapping):
         :rtype: :class:`~wdoo.addons.base.models.res_users`"""
         return self(su=True)['res.users'].browse(self.uid)
 
-    @lazy_property
-    def company(self):
-        """Return the current company (as an instance).
-        If not specified in the context (`allowed_company_ids`),
-        fallback on current user main company.
-        :raise AccessError: invalid or unauthorized `allowed_company_ids` context key content.
-        :return: current company (default=`self.user.company_id`), with the current environment
-        :rtype: res.company
-        .. warning::
-            No sanity checks applied in sudo mode !
-            When in sudo mode, a user can access any company,
-            even if not in his allowed companies.
-            This allows to trigger inter-company modifications,
-            even if the current user doesn't have access to
-            the targeted company.
-        """
-        company_ids = self.context.get('allowed_company_ids', [])
-        if company_ids:
-            if not self.su:
-                user_company_ids = self.user.company_ids.ids
-                if any(cid not in user_company_ids for cid in company_ids):
-                    raise AccessError(_("Access to unauthorized or invalid companies."))
-            return self['res.company'].browse(company_ids[0])
-        return self.user.company_id.with_env(self)
-
-    @lazy_property
-    def companies(self):
-        """Return a recordset of the enabled companies by the user.
-        If not specified in the context(`allowed_company_ids`),
-        fallback on current user companies.
-        :raise AccessError: invalid or unauthorized `allowed_company_ids` context key content.
-        :return: current companies (default=`self.user.company_ids`), with the current environment
-        :rtype: res.company
-        .. warning::
-            No sanity checks applied in sudo mode !
-            When in sudo mode, a user can access any company,
-            even if not in his allowed companies.
-            This allows to trigger inter-company modifications,
-            even if the current user doesn't have access to
-            the targeted company.
-        """
-        company_ids = self.context.get('allowed_company_ids', [])
-        if company_ids:
-            if not self.su:
-                user_company_ids = self.user.company_ids.ids
-                if any(cid not in user_company_ids for cid in company_ids):
-                    raise AccessError(_("Access to unauthorized or invalid companies."))
-            return self['res.company'].browse(company_ids)
-        # By setting the default companies to all user companies instead of the main one
-        # we save a lot of potential trouble in all "out of context" calls, such as
-        # /mail/redirect or /web/image, etc. And it is not unsafe because the user does
-        # have access to these other companies. The risk of exposing foreign records
-        # (wrt to the context) is low because all normal RPCs will have a proper
-        # allowed_company_ids.
-        # Examples:
-        #   - when printing a report for several records from several companies
-        #   - when accessing to a record from the notification email template
-        #   - when loading an binary image on a template
-        return self.user.company_ids.with_env(self)
-
     @property
     def lang(self):
         """Return the current language code.
@@ -622,16 +545,6 @@ class Environment(Mapping):
         """
         lazy_property.reset_all(self)
         self.transaction.clear()
-
-    def clear_upon_failure(self):
-        """ Context manager that rolls back the environments (caches and pending
-            computations and updates) upon exception.
-        """
-        warnings.warn(
-            "Since wdoo 15.0, use cr.savepoint() instead of env.clear_upon_failure().",
-            DeprecationWarning, stacklevel=2,
-        )
-        return self.cr.savepoint()
 
     def is_protected(self, field, record):
         """ Return whether `record` is protected against invalidation or
@@ -709,9 +622,7 @@ class Environment(Mapping):
 
         except KeyError:
             def get(key, get_context=self.context.get):
-                if key == 'company':
-                    return self.company.id
-                elif key == 'uid':
+                if key == 'uid':
                     return (self.uid, self.su)
                 elif key == 'active_test':
                     return get_context('active_test', field.context.get('active_test', True))
