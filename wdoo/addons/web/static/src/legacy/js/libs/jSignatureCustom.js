@@ -11,7 +11,7 @@ function _renderImageOnCanvas( data, formattype, rerendercallable ) {
     // This could be a way to "import" old signatures stored as images
     // This could also be a way to import extra decor into signature area.
 
-    // Odoo override: 
+    // Wdoo override: 
     // If a signature is saved in mobile resolution, when the user tries to sign a document in desktop, the size that is shown is the mobile size, which is strange for the user.
     // This modifies the library method that adds the image to the canvas, resizing the image to the canvas size, keeping the image ratio and showing it centered.
     

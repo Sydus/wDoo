@@ -22,7 +22,7 @@ def transpile_javascript(url, content):
     :return: The transpiled source code
     """
     module_path = url_to_module_path(url)
-    legacy_odoo_define = get_aliased_odoo_define_content(module_path, content)
+    legacy_wdoo_define = get_aliased_wdoo_define_content(module_path, content)
 
     # The order of the operations does sometimes matter.
     steps = [
@@ -44,8 +44,8 @@ def transpile_javascript(url, content):
     ]
     for s in steps:
         content = s(content)
-    if legacy_odoo_define:
-        content += legacy_odoo_define
+    if legacy_wdoo_define:
+        content += legacy_wdoo_define
     return content
 
 
@@ -381,42 +381,42 @@ IMPORT_LEGACY_DEFAULT_RE = re.compile(r"""
     (?P<path>(?P<quote>["'`])([^@\."'`][^"'`]*)(?P=quote))  # legacy alias file ("addon_name.module_name" or "some/path")
     """, re.MULTILINE | re.VERBOSE)
 
-ODOO_MODULE_RE = re.compile(r"""
+WDOO_MODULE_RE = re.compile(r"""
     \s*                                       # some starting space
     \/(\*|\/).*\s*                            # // or /*
-    @wdoo-module                              # @odoo-module
+    @wdoo-module                              # @wdoo-module
     (\s+alias=(?P<alias>[\w.]+))?             # alias=web.AbstractAction (optional)
     (\s+default=(?P<default>False|false|0))?  # default=False or false or 0 (optional)
 """, re.VERBOSE)
 
 
-def is_odoo_module(content):
+def is_wdoo_module(content):
     """
-    Detect if the file is a native odoo module.
-    We look for a comment containing @odoo-module.
+    Detect if the file is a native wdoo module.
+    We look for a comment containing @wdoo-module.
 
     :param content: source code
-    :return: is this a odoo module that need transpilation ?
+    :return: is this a wdoo module that need transpilation ?
     """
     
-    result = ODOO_MODULE_RE.match(content)
+    result = WDOO_MODULE_RE.match(content)
   
     return bool(result)
 
 
-def get_aliased_odoo_define_content(module_path, content):
+def get_aliased_wdoo_define_content(module_path, content):
     """
     To allow smooth transition between the new system and the legacy one, we have the possibility to
     defined an alternative module name (an alias) that will act as proxy between legacy require calls and
     new modules.
 
     Example:
-    If we have a require call somewhere in the odoo source base being:
+    If we have a require call somewhere in the wdoo source base being:
     > vat AbstractAction require("web.AbstractAction")
     we have a problem when we will have converted to module to ES6: its new name will be more like
     "web/chrome/abstract_action". So the require would fail !
     So we add a second small modules, an alias, as such:
-    > odoo.define("web/chrome/abstract_action", async function(require) {
+    > wdoo.define("web/chrome/abstract_action", async function(require) {
     >  return require('web.AbstractAction')[Symbol.for("default")];
     > });
 
@@ -441,7 +441,7 @@ def get_aliased_odoo_define_content(module_path, content):
 
     :return: the alias content to append to the source code.
     """
-    matchobj = ODOO_MODULE_RE.match(content)
+    matchobj = WDOO_MODULE_RE.match(content)
 
     if matchobj:
         alias = matchobj['alias']

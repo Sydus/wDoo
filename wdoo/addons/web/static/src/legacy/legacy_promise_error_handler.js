@@ -3,7 +3,7 @@
 import { registry } from "@web/core/registry";
 
 /**
- * @typedef {import("../env").OdooEnv} OdooEnv
+ * @typedef {import("../env").WdooEnv} WdooEnv
  * @typedef {import("../core/errors/error_service").UncaughtPromiseError} UncaughtPromiseError
  */
 
@@ -12,7 +12,7 @@ import { registry } from "@web/core/registry";
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {Error} error
  * @param {Error} originalError
  * @returns {boolean}

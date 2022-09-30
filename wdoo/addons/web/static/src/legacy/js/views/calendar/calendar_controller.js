@@ -219,7 +219,7 @@ var CalendarController = AbstractController.extend({
 
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onChangeDate: function (event) {
         var modelData = this.model.get();
@@ -245,7 +245,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onChangeFilter: async function (event) {
         if (event.data.value !== 'all' && event.target.filter_field) {
@@ -273,7 +273,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onDeleteRecord: async function (event) {
         var self = this;
@@ -307,7 +307,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onDropRecord: function (event) {
         this._updateRecord(_.extend({}, event.data, {
@@ -316,7 +316,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onNext: function (event) {
         event.stopPropagation();
@@ -324,7 +324,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onOpenCreate: function (event) {
         var self = this;
@@ -408,7 +408,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onOpenEvent: function (event) {
         var self = this;
@@ -454,7 +454,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onPrev: function (ev) {
         ev.stopPropagation();
@@ -465,7 +465,7 @@ var CalendarController = AbstractController.extend({
      * Handles saving data coming from quick create box
      *
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onQuickCreate: function (event) {
         var self = this;
@@ -493,7 +493,7 @@ var CalendarController = AbstractController.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onUpdateRecord: function (event) {
         this._updateRecord(event.data);
@@ -503,7 +503,7 @@ var CalendarController = AbstractController.extend({
      * so update the control panel buttons and breadcrumbs accordingly.
      *
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onViewUpdated: function (event) {
         this.mode = event.data.mode;
@@ -518,7 +518,7 @@ var CalendarController = AbstractController.extend({
     /**
      * Update Attendee status in batch for recurrent events
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
      _onAttendeeStatus: async function(event) {
          const self = this;

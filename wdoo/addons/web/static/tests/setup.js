@@ -150,7 +150,7 @@ function patchLegacyCoreBus() {
     });
 }
 
-function patchOdoo() {
+function patchWdoo() {
     patchWithCleanup(wdoo, {
         debug: "",
     });
@@ -198,7 +198,7 @@ export async function setupTests() {
         forceLocaleAndTimezoneWithCleanup();
         patchBrowserWithCleanup();
         patchLegacyCoreBus();
-        patchOdoo();
+        patchWdoo();
         patchSessionInfo();
     });
 
@@ -218,6 +218,6 @@ export async function setupTests() {
         owlTemplates.push(child.outerHTML);
     }
     templates = `<templates> ${owlTemplates.join("\n")} </templates>`;
-    window.__ODOO_TEMPLATES__ = templates;
+    window.__WDOO_TEMPLATES__ = templates;
     await Promise.all([whenReady(), legacyProm]);
 }

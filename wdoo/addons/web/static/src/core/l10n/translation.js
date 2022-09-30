@@ -32,7 +32,7 @@ class LazyTranslatedString extends String {
  * printed (e.g. inserted into a template).
  * Useful when defining translatable strings in code evaluated before the
  * translations are loaded, as class attributes or at the top-level of
- * an Odoo Web module
+ * an Wdoo Web module
  *
  * @param {string} term
  * @returns {LazyTranslatedString}

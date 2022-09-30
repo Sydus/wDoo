@@ -71,14 +71,14 @@ export function prepareRegistriesWithCleanup() {
 }
 
 /**
- * @typedef {import("@web/env").OdooEnv} OdooEnv
+ * @typedef {import("@web/env").WdooEnv} WdooEnv
  */
 
 /**
  * Create a test environment
  *
  * @param {*} config
- * @returns {Promise<OdooEnv>}
+ * @returns {Promise<WdooEnv>}
  */
 export async function makeTestEnv(config = {}) {
     // add all missing dependencies if necessary
@@ -112,6 +112,6 @@ export async function makeTestEnv(config = {}) {
     const env = makeEnv();
     env.config = config.config || {};
     await startServices(env);
-    env.qweb.addTemplates(window.__ODOO_TEMPLATES__);
+    env.qweb.addTemplates(window.__WDOO_TEMPLATES__);
     return env;
 }

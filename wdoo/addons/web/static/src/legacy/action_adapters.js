@@ -331,7 +331,7 @@ export class ViewAdapter extends ActionAdapter {
 
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     async _trigger_up(ev) {
         const payload = ev.data;

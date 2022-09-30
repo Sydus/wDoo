@@ -467,11 +467,11 @@ var BasicModel = AbstractModel.extend({
     },
     /**
      * This method allows to execute a callback for which '_notifyChanges' and
-     * 'save' will bypass the mutex. This is useful when we are leaving Odoo
+     * 'save' will bypass the mutex. This is useful when we are leaving Wdoo
      * (closing tab/browser), and we want to quickly save pending changes (in
      * an 'onbeforeunload' handler, which is mostly sync).
      *
-     * This function should never be called except when we are leaving Odoo.
+     * This function should never be called except when we are leaving Wdoo.
      *
      * @param {Function} callback
      */

@@ -68,7 +68,7 @@
             },
         });
 
-        // This test file is not respecting Odoo module dependencies.
+        // This test file is not respecting Wdoo module dependencies.
         // The following module might not be loaded (eg. if mail is not installed).
         const DiscussWidgetModule = wdoo.__DEBUG__.services["@mail/widgets/discuss/discuss"];
         const DiscussWidget = DiscussWidgetModule && DiscussWidgetModule[Symbol.for("default")];
@@ -387,7 +387,7 @@
     async function _clickEverywhere(xmlId) {
         ensureSetup();
         console.log("Starting ClickEverywhere test");
-        console.log(`Odoo flavor: ${isEnterprise ? "Enterprise" : "Community"}`);
+        console.log(`Wdoo flavor: ${isEnterprise ? "Enterprise" : "Community"}`);
         const startTime = performance.now();
         testedApps = [];
         testedMenus = [];

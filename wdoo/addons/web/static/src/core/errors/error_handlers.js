@@ -12,7 +12,7 @@ import {
 import { UncaughtClientError, UncaughtCorsError, UncaughtPromiseError } from "./error_service";
 
 /**
- * @typedef {import("../../env").OdooEnv} OdooEnv
+ * @typedef {import("../../env").WdooEnv} WdooEnv
  * @typedef {import("./error_service").UncaughtError} UncaughError
  */
 
@@ -25,7 +25,7 @@ const errorNotificationRegistry = registry.category("error_notifications");
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @returns {boolean}
  */
@@ -46,7 +46,7 @@ errorHandlerRegistry.add("corsErrorHandler", corsErrorHandler, { sequence: 95 })
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @returns {boolean}
  */
@@ -67,7 +67,7 @@ errorHandlerRegistry.add("clientErrorHandler", clientErrorHandler, { sequence: 9
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @param {Error} originalError
  * @returns {boolean}
@@ -119,7 +119,7 @@ errorHandlerRegistry.add("rpcErrorHandler", rpcErrorHandler, { sequence: 97 });
 
 let connectionLostNotifRemove = null;
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @param {Error} originalError
  * @returns {boolean}
@@ -170,7 +170,7 @@ errorHandlerRegistry.add("lostConnectionHandler", lostConnectionHandler, { seque
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @returns {boolean}
  */
@@ -194,7 +194,7 @@ errorHandlerRegistry.add("emptyRejectionErrorHandler", emptyRejectionErrorHandle
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {UncaughError} error
  * @returns {boolean}
  */

@@ -385,7 +385,7 @@ QUnit.module("ActionManager", (hooks) => {
 
     QUnit.test("document's title is updated when an action is executed", async function (assert) {
         assert.expect(8);
-        const defaultTitle = { zopenerp: "Odoo" };
+        const defaultTitle = { zopenerp: "Wdoo" };
         const webClient = await createWebClient({ serverData });
         let currentTitle = webClient.env.services.title.getParts();
         assert.deepEqual(currentTitle, defaultTitle);

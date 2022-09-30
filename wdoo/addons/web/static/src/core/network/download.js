@@ -479,7 +479,7 @@ download._download = (options) => {
         xhr.responseType = "blob";
         xhr.onload = () => {
             const mimetype = xhr.response.type;
-            // In Odoo, the default mimetype, including for JSON errors is text/html (ref: http.py:Root.get_response )
+            // In Wdoo, the default mimetype, including for JSON errors is text/html (ref: http.py:Root.get_response )
             // in that case, we have to assume the file is not valid, hence that there was an error
             if (xhr.status === 200 && mimetype !== "text/html") {
                 // replace because apparently we send some C-D headers with a trailing ";"
@@ -491,7 +491,7 @@ download._download = (options) => {
                 _download(xhr.response, filename, mimetype);
                 return resolve(filename);
 
-            } else if (xhr.status === 502) { // If Odoo is behind another server (nginx)
+            } else if (xhr.status === 502) { // If Wdoo is behind another server (nginx)
                 reject(new ConnectionLostError());
             } else {
                 const decoder = new FileReader();

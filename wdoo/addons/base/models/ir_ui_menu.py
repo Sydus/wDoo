@@ -37,8 +37,7 @@ class IrUiMenu(models.Model):
                                       "If this field is empty, wdoo will compute visibility based on the related object's read access.")
     complete_name = fields.Char(string='Full Path', compute='_compute_complete_name', recursive=True)
     web_icon = fields.Char(string='Web Icon File')
-    action = fields.Reference(selection=[('ir.actions.report', 'ir.actions.report'),
-                                         ('ir.actions.act_window', 'ir.actions.act_window'),
+    action = fields.Reference(selection=[('ir.actions.act_window', 'ir.actions.act_window'),
                                          ('ir.actions.act_url', 'ir.actions.act_url'),
                                          ('ir.actions.server', 'ir.actions.server'),
                                          ('ir.actions.client', 'ir.actions.client')])
@@ -99,7 +98,6 @@ class IrUiMenu(models.Model):
         access = self.env['ir.model.access']
         MODEL_GETTER = {
             'ir.actions.act_window': lambda action: action.res_model,
-            'ir.actions.report': lambda action: action.model,
             'ir.actions.server': lambda action: action.model_id.model,
         }
         for menu in action_menus:

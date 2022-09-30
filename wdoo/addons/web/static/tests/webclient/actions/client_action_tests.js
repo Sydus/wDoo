@@ -213,12 +213,12 @@ QUnit.module("ActionManager", (hooks) => {
         registerCleanup(() => delete core.action_registry.map.HelloWorldTest);
         const webClient = await createWebClient({ serverData });
         let currentTitle = webClient.env.services.title.current;
-        assert.strictEqual(currentTitle, '{"zopenerp":"Odoo"}');
+        assert.strictEqual(currentTitle, '{"zopenerp":"Wdoo"}');
         let currentHash = webClient.env.services.router.current.hash;
         assert.deepEqual(currentHash, {});
         await doAction(webClient, "HelloWorldTest");
         currentTitle = webClient.env.services.title.current;
-        assert.strictEqual(currentTitle, '{"zopenerp":"Odoo","action":"a title"}');
+        assert.strictEqual(currentTitle, '{"zopenerp":"Wdoo","action":"a title"}');
         currentHash = webClient.env.services.router.current.hash;
         assert.deepEqual(currentHash, {
             action: "HelloWorldTest",

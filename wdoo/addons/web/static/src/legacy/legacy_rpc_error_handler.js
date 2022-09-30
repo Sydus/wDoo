@@ -7,7 +7,7 @@ import { lostConnectionHandler, rpcErrorHandler } from "@web/core/errors/error_h
 const errorHandlerRegistry = registry.category("error_handlers");
 
 /**
- * @typedef {import("../env").OdooEnv} OdooEnv
+ * @typedef {import("../env").WdooEnv} WdooEnv
  * @typedef {import("../core/errors/error_service").UncaughtError} UncaughError
  */
 
@@ -16,7 +16,7 @@ const errorHandlerRegistry = registry.category("error_handlers");
 // -----------------------------------------------------------------------------
 
 /**
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @param {Error} error
  * @param {Error} originalError
  * @returns {boolean}

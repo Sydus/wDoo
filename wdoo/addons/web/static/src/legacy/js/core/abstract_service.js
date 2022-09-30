@@ -20,7 +20,7 @@ var AbstractService = Class.extend(Mixins.EventDispatcherMixin, ServicesMixin, {
      * Directly calls the requested service, instead of triggering a
      * 'call_service' event up, which wouldn't work as services have no parent
      *
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _trigger_up: function (ev) {
         Mixins.EventDispatcherMixin._trigger_up.apply(this, arguments);

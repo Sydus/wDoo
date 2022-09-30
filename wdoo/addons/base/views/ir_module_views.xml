@@ -129,9 +129,7 @@
                             <group string="Created Menus"/>
                             <p class="oe_grey" attrs="{'invisible': [('menus_by_module','not in',[None,False])]}"> -This module does not create menu.</p>
                             <field name="menus_by_module"/>
-                            <group string="Defined Reports"/>
-                            <p class="oe_grey" attrs="{'invisible': [('reports_by_module','not in',[None,False])]}"> -This module does not create report.</p>
-                            <field name="reports_by_module"/>
+                            
                         </page>
                     </notebook>
                     <field name="description_html" class='oe_styling_v8'/>

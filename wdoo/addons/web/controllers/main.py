@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Part of Wdoo. See LICENSE file for full copyright and licensing details.
 import pytz
 import base64
 import copy
@@ -83,7 +83,7 @@ OPERATOR_MAPPING = {
 }
 
 #----------------------------------------------------------
-# Odoo Web helpers
+# Wdoo Web helpers
 #----------------------------------------------------------
 
 db_list = http.db_list
@@ -101,7 +101,7 @@ def serialize_exception(f):
             se = _serialize_exception(e)
             error = {
                 'code': 200,
-                'message': "Odoo Server Error",
+                'message': "Wdoo Server Error",
                 'data': se
             }
             return werkzeug.exceptions.InternalServerError(json.dumps(error))
@@ -295,7 +295,7 @@ def generate_views(action):
     action['views'] = [(view_id, view_modes[0])]
 
 def fix_view_modes(action):
-    """ For historical reasons, Odoo has weird dealings in relation to
+    """ For historical reasons, Wdoo has weird dealings in relation to
     view_mode and the view_type attribute (on window actions):
 
     * one of the view modes is ``tree``, which stands for both list views
@@ -793,7 +793,7 @@ class GroupExportXlsxWriter(ExportXlsxWriter):
 
 
 #----------------------------------------------------------
-# Odoo Web web Controllers
+# Wdoo Web web Controllers
 #----------------------------------------------------------
 class Home(http.Controller):
 
@@ -1545,8 +1545,6 @@ class Action(http.Controller):
         if base_action:
             ctx = dict(request.context)
             action_type = base_action[0]['type']
-            if action_type == 'ir.actions.report':
-                ctx.update({'bin_size': True})
             if additional_context:
                 ctx.update(additional_context)
             request.context = ctx
@@ -1727,7 +1725,7 @@ class ExportFormat(object):
         return f"{model_description} ({base})"
 
     def from_data(self, fields, rows):
-        """ Conversion method from Odoo's export data to whatever the
+        """ Conversion method from Wdoo's export data to whatever the
         current export class outputs
 
         :params list fields: a list of fields to export
@@ -1852,130 +1850,3 @@ class ExcelExport(ExportFormat, http.Controller):
 
         return xlsx_writer.value
 
-
-class ReportController(http.Controller):
-
-    #------------------------------------------------------
-    # Report controllers
-    #------------------------------------------------------
-    @http.route([
-        '/report/<converter>/<reportname>',
-        '/report/<converter>/<reportname>/<docids>',
-    ], type='http', auth='user', website=True)
-    def report_routes(self, reportname, docids=None, converter=None, **data):
-        report = request.env['ir.actions.report']._get_report_from_name(reportname)
-        context = dict(request.env.context)
-
-        if docids:
-            docids = [int(i) for i in docids.split(',')]
-        if data.get('options'):
-            data.update(json.loads(data.pop('options')))
-        if data.get('context'):
-            data['context'] = json.loads(data['context'])
-            context.update(data['context'])
-        if converter == 'html':
-            html = report.with_context(context)._render_qweb_html(docids, data=data)[0]
-            return request.make_response(html)
-        elif converter == 'pdf':
-            pdf = report.with_context(context)._render_qweb_pdf(docids, data=data)[0]
-            pdfhttpheaders = [('Content-Type', 'application/pdf'), ('Content-Length', len(pdf))]
-            return request.make_response(pdf, headers=pdfhttpheaders)
-        elif converter == 'text':
-            text = report.with_context(context)._render_qweb_text(docids, data=data)[0]
-            texthttpheaders = [('Content-Type', 'text/plain'), ('Content-Length', len(text))]
-            return request.make_response(text, headers=texthttpheaders)
-        else:
-            raise werkzeug.exceptions.HTTPException(description='Converter %s not implemented.' % converter)
-
-    #------------------------------------------------------
-    # Misc. route utils
-    #------------------------------------------------------
-    @http.route(['/report/barcode', '/report/barcode/<type>/<path:value>'], type='http', auth="public")
-    def report_barcode(self, type, value, width=600, height=100, humanreadable=0, quiet=1, mask=None):
-        """Contoller able to render barcode images thanks to reportlab.
-        Samples:
-            <img t-att-src="'/report/barcode/QR/%s' % o.name"/>
-            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' %
-                ('QR', o.name, 200, 200)"/>
-
-        :param type: Accepted types: 'Codabar', 'Code11', 'Code128', 'EAN13', 'EAN8', 'Extended39',
-        'Extended93', 'FIM', 'I2of5', 'MSI', 'POSTNET', 'QR', 'Standard39', 'Standard93',
-        'UPCA', 'USPS_4State'
-        :param humanreadable: Accepted values: 0 (default) or 1. 1 will insert the readable value
-        at the bottom of the output image
-        :param quiet: Accepted values: 0 (default) or 1. 1 will display white
-        margins on left and right.
-        :param mask: The mask code to be used when rendering this QR-code.
-                     Masks allow adding elements on top of the generated image,
-                     such as the Swiss cross in the center of QR-bill codes.
-        """
-        try:
-            barcode = request.env['ir.actions.report'].barcode(type, value, width=width,
-                height=height, humanreadable=humanreadable, quiet=quiet, mask=mask)
-        except (ValueError, AttributeError):
-            raise werkzeug.exceptions.HTTPException(description='Cannot convert into barcode.')
-
-        return request.make_response(barcode, headers=[('Content-Type', 'image/png')])
-
-    @http.route(['/report/download'], type='http', auth="user")
-    def report_download(self, data, context=None):
-        """This function is used by 'action_manager_report.js' in order to trigger the download of
-        a pdf/controller report.
-
-        :param data: a javascript array JSON.stringified containg report internal url ([0]) and
-        type [1]
-        :returns: Response with an attachment header
-
-        """
-        requestcontent = json.loads(data)
-        url, type = requestcontent[0], requestcontent[1]
-        reportname = '???'
-        try:
-            if type in ['qweb-pdf', 'qweb-text']:
-                converter = 'pdf' if type == 'qweb-pdf' else 'text'
-                extension = 'pdf' if type == 'qweb-pdf' else 'txt'
-
-                pattern = '/report/pdf/' if type == 'qweb-pdf' else '/report/text/'
-                reportname = url.split(pattern)[1].split('?')[0]
-
-                docids = None
-                if '/' in reportname:
-                    reportname, docids = reportname.split('/')
-
-                if docids:
-                    # Generic report:
-                    response = self.report_routes(reportname, docids=docids, converter=converter, context=context)
-                else:
-                    # Particular report:
-                    data = dict(url_decode(url.split('?')[1]).items())  # decoding the args represented in JSON
-                    if 'context' in data:
-                        context, data_context = json.loads(context or '{}'), json.loads(data.pop('context'))
-                        context = json.dumps({**context, **data_context})
-                    response = self.report_routes(reportname, converter=converter, context=context, **data)
-
-                report = request.env['ir.actions.report']._get_report_from_name(reportname)
-                filename = "%s.%s" % (report.name, extension)
-
-                if docids:
-                    ids = [int(x) for x in docids.split(",")]
-                    obj = request.env[report.model].browse(ids)
-                    if report.print_report_name and not len(obj) > 1:
-                        report_name = safe_eval(report.print_report_name, {'object': obj, 'time': time})
-                        filename = "%s.%s" % (report_name, extension)
-                response.headers.add('Content-Disposition', content_disposition(filename))
-                return response
-            else:
-                return
-        except Exception as e:
-            _logger.exception("Error while generating report %s", reportname)
-            se = _serialize_exception(e)
-            error = {
-                'code': 200,
-                'message': "Odoo Server Error",
-                'data': se
-            }
-            return request.make_response(html_escape(json.dumps(error)))
-
-    @http.route(['/report/check_wkhtmltopdf'], type='json', auth="user")
-    def check_wkhtmltopdf(self):
-        return request.env['ir.actions.report'].get_wkhtmltopdf_state()

@@ -21,7 +21,7 @@ return AbstractModel.extend({
         this._super.apply(this, arguments);
         this.end_date = null;
         var week_start = _t.database.parameters.week_start;
-        // calendar uses index 0 for Sunday but Odoo stores it as 7
+        // calendar uses index 0 for Sunday but Wdoo stores it as 7
         this.week_start = week_start !== undefined && week_start !== false ? week_start % 7 : moment().startOf('week').day();
         this.week_stop = this.week_start + 6;
         this.filter_check_all = {};
@@ -151,7 +151,7 @@ return AbstractModel.extend({
         return true;
     },
     /**
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     createRecord: function (event) {
         var data = this.calendarEventToRecord(event.data.data);

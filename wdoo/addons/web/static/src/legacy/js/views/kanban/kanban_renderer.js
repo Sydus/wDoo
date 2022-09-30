@@ -586,7 +586,7 @@ var KanbanRenderer = BasicRenderer.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onQuickCreateColumnUpdated: function (ev) {
         ev.stopPropagation();
@@ -629,7 +629,7 @@ var KanbanRenderer = BasicRenderer.extend({
      * received data.
      *
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onSetProgressBarState: function (ev) {
         if (!this.columnOptions.progressBarStates[ev.data.columnID]) {

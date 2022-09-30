@@ -32,7 +32,7 @@ export function isMobileOS() {
 }
 
 export function isIosApp() {
-    return navigator.userAgent.match(/OdooMobile \(iOS\)/i);
+    return navigator.userAgent.match(/WdooMobile \(iOS\)/i);
 }
 
 export function hasTouch() {

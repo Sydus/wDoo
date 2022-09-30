@@ -19,7 +19,7 @@ export function registerCleanup(callback) {
     cleanups.push(callback);
 }
 
-QUnit.on("OdooAfterTestHook", (info) => {
+QUnit.on("WdooAfterTestHook", (info) => {
     if (QUnit.config.debug) {
         return;
     }
@@ -74,7 +74,7 @@ const validElements = [
  * As a payload, an object with keys 'moduleName' and 'testName' is provided. It
  * is used to indicate the test that left elements in the DOM, when it happens.
  */
-QUnit.on("OdooAfterTestHook", function (info) {
+QUnit.on("WdooAfterTestHook", function (info) {
     if (QUnit.config.debug) {
         return;
     }

@@ -100,7 +100,7 @@ wdoo.define('web.test_env', async function (require) {
     /**
      * Before each test, we want owl.Component.env to be a fresh test environment.
      */
-    QUnit.on('OdooBeforeTestHook', function () {
+    QUnit.on('WdooBeforeTestHook', function () {
         owl.Component.env = makeTestEnvironment();
     });
 

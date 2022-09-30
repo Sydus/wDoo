@@ -261,7 +261,6 @@
                     <rng:attribute name="binding_type">
                         <rng:choice>
                             <rng:value>action</rng:value>
-                            <rng:value>report</rng:value>
                         </rng:choice>
                     </rng:attribute>
                 </rng:optional>

@@ -52,7 +52,7 @@ QUnit.test("ErrorDialog with traceback", async (assert) => {
     env = await makeTestEnv();
     parent = await mount(Parent, { env, target });
     assert.containsOnce(target, ".o_dialog");
-    assert.strictEqual(target.querySelector("header .modal-title").textContent, "Odoo Error");
+    assert.strictEqual(target.querySelector("header .modal-title").textContent, "Wdoo Error");
     const mainButtons = target.querySelectorAll("main button");
     assert.deepEqual(
         [...mainButtons].map((el) => el.textContent),
@@ -106,7 +106,7 @@ QUnit.test("Client ErrorDialog with traceback", async (assert) => {
     assert.containsOnce(target, ".o_dialog");
     assert.strictEqual(
         target.querySelector("header .modal-title").textContent,
-        "Odoo Client Error"
+        "Wdoo Client Error"
     );
     const mainButtons = target.querySelectorAll("main button");
     assert.deepEqual(
@@ -237,7 +237,7 @@ QUnit.test("RedirectWarningDialog", async (assert) => {
     assert.containsNone(target, ".o_dialog");
     parent = await mount(Parent, { env, target });
     assert.containsOnce(target, ".o_dialog");
-    assert.strictEqual(target.querySelector("header .modal-title").textContent, "Odoo Warning");
+    assert.strictEqual(target.querySelector("header .modal-title").textContent, "Wdoo Warning");
     assert.strictEqual(target.querySelector("main").textContent, "Some strange unreadable message");
     let footerButtons = target.querySelectorAll("footer button");
     assert.deepEqual(
@@ -286,11 +286,11 @@ QUnit.test("SessionExpiredDialog", async (assert) => {
     assert.containsOnce(target, ".o_dialog");
     assert.strictEqual(
         target.querySelector("header .modal-title").textContent,
-        "Odoo Session Expired"
+        "Wdoo Session Expired"
     );
     assert.strictEqual(
         target.querySelector("main p").textContent,
-        " Your Odoo session expired. The current page is about to be refreshed. "
+        " Your Wdoo session expired. The current page is about to be refreshed. "
     );
     const footerButton = target.querySelector(".o_dialog footer button");
     assert.strictEqual(footerButton.textContent, "Ok");

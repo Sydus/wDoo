@@ -210,7 +210,7 @@ class Module(models.Model):
     @api.depends('name', 'state')
     def _get_views(self):
         IrModelData = self.env['ir.model.data'].with_context(active_test=True)
-        dmodels = ['ir.ui.view', 'ir.actions.report', 'ir.ui.menu']
+        dmodels = ['ir.ui.view', 'ir.ui.menu']
 
         for module in self:
             # Skip uninstalled modules below, no data to find anyway.

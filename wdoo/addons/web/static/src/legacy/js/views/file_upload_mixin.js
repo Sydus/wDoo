@@ -199,7 +199,7 @@ const ProgressBarMixin = {
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {integer} ev.data.fileUploadId
      */
     _onProgressBarAbort(ev) {

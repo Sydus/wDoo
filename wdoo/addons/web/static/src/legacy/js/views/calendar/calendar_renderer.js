@@ -105,7 +105,7 @@ var SidebarFilter = Widget.extend(FieldManagerMixin, {
 
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onFieldChanged: function (event) {
         var self = this;
@@ -1067,7 +1067,7 @@ return AbstractRenderer.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onEditEvent: function (event) {
         this._unselectEvent();
@@ -1078,7 +1078,7 @@ return AbstractRenderer.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} event
+     * @param {WdooEvent} event
      */
     _onDeleteEvent: function (event) {
         this._unselectEvent();

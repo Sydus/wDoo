@@ -53,7 +53,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
         // of the model is called in a mutex. The following structure is used to
         // accumulate change requests that haven't been sent to the model yet,
         // because of the mutex. This is useful when we want to quickly save a
-        // record before leaving Odoo (see @_urgentSave).
+        // record before leaving Wdoo (see @_urgentSave).
         this.pendingChanges = [];
     },
     /**
@@ -267,7 +267,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     /**
      * We override applyChanges (from the field manager mixin) to protect it
      * with a mutex. As we do so, we need to accumulate change requests that
-     * haven't been sent to the model yet, just in case we would leave Odoo
+     * haven't been sent to the model yet, just in case we would leave Wdoo
      * (close tab/browser). If this happens, we will bypass the mutex and notify
      * the model directly of those changes, to save them if possible (see
      * @_urgentSave).
@@ -332,7 +332,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      *
      * @param {string} id - the id of one of the view's records
      * @param {string[]} fields - the changed fields
-     * @param {OdooEvent} e - the event that triggered the change
+     * @param {WdooEvent} e - the event that triggered the change
      * @returns {Promise}
      */
     _confirmChange: function (id, fields, e) {
@@ -702,7 +702,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
         return this.updateControlPanel(props);
     },
     /**
-     * To be called **only** when Odoo is about to be closed, and we want to
+     * To be called **only** when Wdoo is about to be closed, and we want to
      * save potential changes on a given record.
      *
      * We can't follow the normal flow (onchange(s) + save, mutexified),
@@ -767,7 +767,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * a list view.
      *
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onDiscardChanges: function (ev) {
         var self = this;
@@ -789,7 +789,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * in readonly (e.g. Priority).
      *
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onFieldChanged: function (ev) {
         if (this.mode === 'readonly' && !('force_save' in ev.data)) {
@@ -799,7 +799,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onPagerChanged: async function (ev) {
         ev.stopPropagation();
@@ -821,7 +821,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     /**
      * Called when the user closes the tab or browser. To be overriden by
      * specific controllers to execute some code (e.g. save pending changes)
-     * just before leaving Odoo.
+     * just before leaving Wdoo.
      *
      * @abstract
      * @private
@@ -834,7 +834,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      *
      * @todo: rename db_id into handle
      *
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {Object} ev.data
      * @param {string} [ev.data.db_id] handle of the data to reload and
      *   re-render (reload the whole form by default)
@@ -864,7 +864,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * Resequence records in the given order.
      *
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {string[]} ev.data.recordIds
      * @param {integer} ev.data.offset
      * @param {string} ev.data.handleField
@@ -890,7 +890,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     /**
      * Load the optional columns settings in local storage for this view
      *
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {Object} ev.data.keyParts see _getLocalStorageKey
      * @param {function} ev.data.callback function to call with the result
      * @private
@@ -906,7 +906,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     /**
      * Save the optional columns settings in local storage for this view
      *
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {Object} ev.data.keyParts see _getLocalStorageKey
      * @param {Array<string>} ev.data.optionalColumnsEnabled list of optional
      *   field names that have been enabled
@@ -922,7 +922,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onSetDirty: function (ev) {
         ev.stopPropagation(); // prevent other controllers from handling this request
@@ -932,7 +932,7 @@ var BasicController = AbstractController.extend(FieldManagerMixin, {
      * open the translation view for the current field
      *
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onTranslate: async function (ev) {
         ev.stopPropagation();

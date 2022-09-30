@@ -154,7 +154,7 @@ var BasicRenderer = AbstractRenderer.extend(WidgetAdapterMixin, {
      * @param {Object} state
      * @param {string} id
      * @param {string[]} fields
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @returns {Promise<AbstractField[]>} resolved with the list of widgets
      *                                      that have been reset
      */
@@ -933,11 +933,11 @@ var BasicRenderer = AbstractRenderer.extend(WidgetAdapterMixin, {
     /**
      * When someone presses the TAB/UP/DOWN/... key in a widget, it is nice to
      * be able to navigate in the view (default browser behaviors are disabled
-     * by Odoo).
+     * by Wdoo).
      *
      * @abstract
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onNavigationMove: function (ev) {},
 });

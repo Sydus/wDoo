@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Part of Wdoo. See LICENSE file for full copyright and licensing details.
 
 {
     'name': 'Web',
     'category': 'Hidden',
     'version': '1.0',
     'description': """
-Odoo Web core module.
+Wdoo Web core module.
 ========================
 
-This module provides the core of the Odoo Web Client.
+This module provides the core of the Wdoo Web Client.
 """,
     'depends': ['base'],
     'auto_install': True,
@@ -46,7 +46,6 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/xml/file_upload_progress_card.xml',
             'web/static/src/legacy/xml/kanban.xml',
             'web/static/src/legacy/xml/pivot.xml',
-            'web/static/src/legacy/xml/report.xml',
             'web/static/src/legacy/xml/web_calendar.xml',
             'web/static/src/legacy/xml/graph.xml',
             'web/static/src/legacy/xml/search_panel.xml',
@@ -162,8 +161,6 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/js/core/misc.js',
             'web/static/src/legacy/js/core/profiling_qweb_view.js',
             'web/static/src/legacy/js/fields/*',
-            'web/static/src/legacy/js/report/utils.js',
-            'web/static/src/legacy/js/report/client_action.js',
             'web/static/src/legacy/js/services/data_manager.js',
             'web/static/src/legacy/js/services/session.js',
             'web/static/src/legacy/js/tools/tools.js',
@@ -263,7 +260,6 @@ This module provides the core of the Odoo Web Client.
             'base/static/src/css/description.css',
             'web/static/lib/fontawesome/css/font-awesome.css',
             'web/static/fonts/fonts.scss',
-            'web/static/src/legacy/scss/report.scss',
             'web/static/src/legacy/scss/layout_standard.scss',
             'web/static/src/legacy/scss/layout_background.scss',
             'web/static/src/legacy/scss/layout_boxed.scss',
@@ -273,8 +269,6 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/js/public/public_root.js',
             'web/static/src/legacy/js/public/public_root_instance.js',
             'web/static/src/legacy/js/public/public_widget.js',
-            'web/static/src/legacy/js/report/utils.js',
-            'web/static/src/legacy/js/report/report.js',
         ],
         'web.report_assets_pdf': [
             'web/static/src/css/reset.min.css',
@@ -339,7 +333,7 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/scss/translation_dialog.scss',
             'web/static/src/legacy/scss/keyboard.scss',
             'web/static/src/legacy/scss/name_and_signature.scss',
-            'web/static/src/legacy/scss/web.zoomodoo.scss',
+            'web/static/src/legacy/scss/web.zoomwdoo.scss',
             'web/static/src/legacy/scss/color_picker.scss',
             'web/static/src/legacy/scss/fontawesome_overridden.scss',
             'web/static/lib/tempusdominus/tempusdominus.scss',
@@ -387,7 +381,7 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/js/libs/underscore.js',
             'web/static/src/legacy/js/libs/pdfjs.js',
             'web/static/src/legacy/js/libs/popper.js',
-            'web/static/src/legacy/js/libs/zoomodoo.js',
+            'web/static/src/legacy/js/libs/zoomwdoo.js',
             'web/static/src/legacy/js/libs/jSignatureCustom.js',
             'web/static/src/legacy/js/core/abstract_service.js',
             'web/static/src/legacy/js/core/abstract_storage_service.js',

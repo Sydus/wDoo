@@ -2,7 +2,7 @@ wdoo.define('web.GraphController', function (require) {
 "use strict";
 
 /*---------------------------------------------------------
- * Odoo Graph view
+ * Wdoo Graph view
  *---------------------------------------------------------*/
 
 const AbstractController = require('web.AbstractController');
@@ -283,7 +283,7 @@ var GraphController = AbstractController.extend({
 
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onItemSelected(ev) {
         const item = ev.data.item;
@@ -322,7 +322,7 @@ var GraphController = AbstractController.extend({
 
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      * @param {Array[]} ev.data.domain
      */
     _onOpenView(ev) {

@@ -56,7 +56,7 @@ function combineErrorNames(uncaughtError, originalError) {
 }
 
 /**
- * @param {import("../../env").OdooEnv} env
+ * @param {import("../../env").WdooEnv} env
  * @param {UncaughtError} uncaughtError
  * @param {Error} originalError
  * @returns {Promise<void>}

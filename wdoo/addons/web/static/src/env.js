@@ -7,7 +7,7 @@ import { registry } from "./core/registry";
 // -----------------------------------------------------------------------------
 
 /**
- * @typedef {Object} OdooEnv
+ * @typedef {Object} WdooEnv
  * @property {Object} services
  * @property {owl.core.EventBus} bus
  * @property {owl.QWeb} qweb
@@ -21,9 +21,9 @@ import { registry } from "./core/registry";
 // -----------------------------------------------------------------------------
 
 /**
- * Return a value Odoo Env object
+ * Return a value Wdoo Env object
  *
- * @returns {OdooEnv}
+ * @returns {WdooEnv}
  */
 export function makeEnv() {
     return {
@@ -52,7 +52,7 @@ export const SERVICES_METADATA = {};
  * Start all services registered in the service registry, while making sure
  * each service dependencies are properly fulfilled.
  *
- * @param {OdooEnv} env
+ * @param {WdooEnv} env
  * @returns {Promise<void>}
  */
 export async function startServices(env) {

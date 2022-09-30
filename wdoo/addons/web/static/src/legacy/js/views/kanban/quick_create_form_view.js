@@ -40,7 +40,7 @@ var QuickCreateFormRenderer = FormRenderer.extend({
     /**
      * @override
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onNavigationMove: function (ev) {
         var direction = ev.data.direction;

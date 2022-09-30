@@ -1191,7 +1191,7 @@ var FormRenderer = BasicRenderer.extend({
 
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onActivateNextWidget: function (ev) {
         ev.stopPropagation();
@@ -1217,7 +1217,7 @@ var FormRenderer = BasicRenderer.extend({
     /**
      * @override
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onNavigationMove: function (ev) {
         ev.stopPropagation();
@@ -1253,7 +1253,7 @@ var FormRenderer = BasicRenderer.extend({
     },
     /**
      * @private
-     * @param {OdooEvent} ev
+     * @param {WdooEvent} ev
      */
     _onQuickEdit: function (ev) {
         if (this.mode !== 'readonly' ||

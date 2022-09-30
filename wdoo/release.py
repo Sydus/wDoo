@@ -26,7 +26,7 @@ License :: OSI Approved :: BSD 3-Clause License
 Programming Language :: Python
 """
 url = 'https://www.sydus.it'
-author = 'Sydus srls, Odoo S.A.'
+author = 'Sydus srls, Omdoo S.A.'
 author_email = 'info@sydus.it'
 license = 'BSD 3-Clause'
 

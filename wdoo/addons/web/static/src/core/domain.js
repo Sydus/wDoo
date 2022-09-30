@@ -13,7 +13,7 @@ import { toPyValue } from "./py_js/py_utils";
 class InvalidDomainError extends Error {}
 
 /**
- * Javascript representation of an Odoo domain
+ * Javascript representation of an Wdoo domain
  */
 export class Domain {
     /**

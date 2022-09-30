@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Part of Wdoo. See LICENSE file for full copyright and licensing details.
 
 import base64
 import hashlib
@@ -125,7 +125,6 @@ class Http(models.AbstractModel):
     def _content_image(self, xmlid=None, model='ir.attachment', res_id=None, field='datas',
             filename_field='name', unique=None, filename=None, mimetype=None, download=None,
             width=0, height=0, crop=False, quality=0, access_token=None, **kwargs):
-        print('porcodio')
         status, headers, image_base64 = self.binary_content(
             xmlid=xmlid, model=model, id=res_id, field=field, unique=unique, filename=filename,
             filename_field=filename_field, download=download, mimetype=mimetype,

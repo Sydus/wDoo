@@ -26,7 +26,7 @@ export class ConnectionAbortedError extends Error {}
 // Main RPC method
 // -----------------------------------------------------------------------------
 export function makeErrorFromResponse(reponse) {
-    // Odoo returns error like this, in a error field instead of properly
+    // Wdoo returns error like this, in a error field instead of properly
     // using http error codes...
     const { code, data: errorData, message, type: subType } = reponse;
     const { context: data_context, name: data_name } = errorData || {};
@@ -60,7 +60,7 @@ function jsonrpc(env, rpcId, url, params, settings = {}) {
         // handle success
         request.addEventListener("load", () => {
             if (request.status === 502) {
-                // If Odoo is behind another server (eg.: nginx)
+                // If Wdoo is behind another server (eg.: nginx)
                 bus.trigger("RPC:RESPONSE", data.id);
                 reject(new ConnectionLostError());
                 return;
